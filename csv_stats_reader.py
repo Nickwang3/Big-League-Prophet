@@ -1,5 +1,7 @@
 import pandas as pd 
 import numpy as np
+from baseballReferenceScrape import getPlayersStats
+
 
 #creating panda data frames for player id search and salary data search
 salary_data = pd.read_csv('salary_data/salary_data.csv')
@@ -17,7 +19,7 @@ def getPlayerTeam(playerName):
 
 		indx = salary_data[salary_data['Name']==playerName].index.item()
 		team = salary_data.at[indx, 'Team']
-		team = team.strip()
+		team = str(team.strip())
 
 	else:
 
@@ -113,7 +115,7 @@ def getContractSignYear(playerName):
 		years = salary_data.at[indx, 'Years']
 		indx_paren = years.index("(")
 		indx_dash = years.find("-")
-		year_signed = years[indx_paren+1:indx_dash]
+		year_signed = int(years[indx_paren+1:indx_dash])
 
 
 	else:
@@ -124,29 +126,32 @@ def getContractSignYear(playerName):
 
 	return year_signed
 
-gets the players stats from the years prior to the signing of the newest contract (DATAFRAME)
+# gets the players stats from the years prior to the signing of the newest contract (DATAFRAME)
 def getStatsBeforeSigning(playerName):
+
+	getPlayersStats(playerName)
 
 	full_name = playerName.replace(" ", "")
 	player_stats = pd.read_csv('battingStatsPlayers/' + full_name.lower() + getPlayerTeam(playerName) + ".csv")
 
-	year_signed = getContractSignYear(playerName) - 1
+	# year_signed = getContractSignYear(playerName) - 1
 
-	indx = player_stats[player_stats['Year']==year_signed].index.item()
-	adjusted_player_stats = player_stats[indx]
+	# indx = player_stats[player_stats['Year']==year_signed].index.item()
+	# adjusted_player_stats = player_stats[indx]
 
 
-	return adjusted_player_stats
+	return player_stats
 
 def main():
 
+
 	user_input = input("Enter player who's salary you wish to see: ")
+	getStatsBeforeSigning(user_input)
 	print()
 	print("Total Contract value:",getTotalContractValue(user_input))
 	print("Salary Years:",getContractYears(user_input))
 	print("Year Contract Signed:",getContractSignYear(user_input))
 	print("Contract length:",getContractLength(user_input))
 	print("Team:",getPlayerTeam(user_input))
-	# print(getStatsBeforeSigning(user_input))
 
 main()
