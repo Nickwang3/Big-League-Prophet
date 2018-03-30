@@ -1,6 +1,7 @@
 import pandas as pd 
 import numpy as np
 from baseballReferenceScrape import getPlayersStats
+from salaryScraper import getSalaryData
 
 
 #creating panda data frames for player id search and salary data search
@@ -144,7 +145,7 @@ def getStatsBeforeSigning(playerName):
 
 def main():
 
-
+	getSalaryData()
 	user_input = input("Enter player who's salary you wish to see: ")
 	getStatsBeforeSigning(user_input)
 	print()

@@ -10,7 +10,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import csv
 
-#grabs players baseball reference page
+#grabs players baseball reference page and downloads their stats
 def getPlayersStats(playerName):
 	
 	#user input for finding players statistics off of Baseball Reference
@@ -102,9 +102,9 @@ def getCurrentTeam(player_page_url):
 
 	#dictionary of team names and their abbreviations
 	dict_teams = {'Arizona Diamondbacks':'ARI','Atlanta Braves':'ATL','Baltimore Orioles':'BAL','Boston Red Sox':'BOS','Chicago Cubs':'CHC','Chicago White Sox':'CWS','Cincinnati Reds':'CIN',
-	'Cleveland Indians':'CLE','Colorado Rockies':'COL','Detroit Tigers':'DET','Florida Marlins':'FLA','Houston Astros':'HOU','Kansas City Royals':'KAN','Los Angeles Angels of Anaheim':'LAA','Los Angeles Dodgers':'LAD',
+	'Cleveland Indians':'CLE','Colorado Rockies':'COL','Detroit Tigers':'DET','Florida Marlins':'FLA','Houston Astros':'HOU','Kansas City Royals':'KC','Los Angeles Angels of Anaheim':'LAA','Los Angeles Dodgers':'LAD',
 	'Milwaukee Brewers':'MIL','Minnesota Twins':'MIN','New York Mets':'NYM','New York Yankees':'NYY','Oakland Athletics':'OAK','Philadelphia Phillies':'PHI','Pittsburgh Pirates':'PIT',
-	'San Diego Padres': 'SD','San Francisco Giants': 'SF','Seattle Mariners':'SEA','St. Louis Cardinals':'STL','Tampa Bay Ray': 'TB','Texas Rangers':'TEX','Toronto Blue Jays':'TOR','Washington Nationals':'WAS'}
+	'San Diego Padres': 'SD','San Francisco Giants': 'SF','Seattle Mariners':'SEA','St. Louis Cardinals':'STL','Tampa Bay Ray': 'TB','Texas Rangers':'TEX','Toronto Blue Jays':'TOR','Washington Nationals':'WSH'}
 
 	team_abbrev = dict_teams[player_team]
 
