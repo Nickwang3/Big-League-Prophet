@@ -2,8 +2,6 @@ import pandas as pd
 import numpy as np
 
 #creating panda data frames for player id search and salary data search
-player_register = pd.read_csv('playerid_listUTF-8.csv')
-
 salary_data = pd.read_csv('salary_data/salary_data.csv')
 
 
@@ -29,8 +27,8 @@ def getPlayerTeam(playerName):
 
 	return team
 
-#finds a players total current salary value in (INTEGER)
-def getTotalContractValue(playerName):
+#finds a players current salary value for current year in (INTEGER)
+def getCurrentYearSalary(playerName):
 
 	#check if player entered is in data base
 	if playerName in salary_data.Name.values:
@@ -46,6 +44,25 @@ def getTotalContractValue(playerName):
 		return
 
 	return salary
+
+#finds the contracts total value
+def getTotalContractValue(playerName):
+
+	#check if player entered is in data base
+	if playerName in salary_data.Name.values:
+
+		indx = salary_data[salary_data['Name']==playerName].index.item()
+		salary = salary_data.at[indx, 'Total Value']
+		salary = int(salary[2:].replace(",", ""))
+
+	else:
+
+		print()
+		print("Player not found")
+		return
+
+	return salary
+
 
 #finds num of years contract is active for (INTEGER)
 def getContractLength(playerName):
@@ -98,6 +115,7 @@ def getContractSignYear(playerName):
 		indx_dash = years.find("-")
 		year_signed = years[indx_paren+1:indx_dash]
 
+
 	else:
 
 		print()
@@ -106,23 +124,29 @@ def getContractSignYear(playerName):
 
 	return year_signed
 
-#gets the players stats from the years prior to the signing of the newest contract (DATAFRAME)
+gets the players stats from the years prior to the signing of the newest contract (DATAFRAME)
 def getStatsBeforeSigning(playerName):
 
 	full_name = playerName.replace(" ", "")
 	player_stats = pd.read_csv('battingStatsPlayers/' + full_name.lower() + getPlayerTeam(playerName) + ".csv")
 
-	return player_stats
+	year_signed = getContractSignYear(playerName) - 1
+
+	indx = player_stats[player_stats['Year']==year_signed].index.item()
+	adjusted_player_stats = player_stats[indx]
+
+
+	return adjusted_player_stats
 
 def main():
 
 	user_input = input("Enter player who's salary you wish to see: ")
 	print()
-	print("Total Salary value:",getTotalContractValue(user_input))
+	print("Total Contract value:",getTotalContractValue(user_input))
 	print("Salary Years:",getContractYears(user_input))
 	print("Year Contract Signed:",getContractSignYear(user_input))
 	print("Contract length:",getContractLength(user_input))
 	print("Team:",getPlayerTeam(user_input))
-	print(getStatsBeforeSigning(user_input))
+	# print(getStatsBeforeSigning(user_input))
 
 main()
