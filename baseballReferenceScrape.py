@@ -10,13 +10,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import csv
 
-
-def main():
+#grabs players baseball reference page
+def getPlayersStats(playerName):
 	
-	print()
 	#user input for finding players statistics off of Baseball Reference
 	player_id = 1   #used to identify multiple players with similar url name
-	players_full_name = (input("Enter player's full name: ")).lower().strip().split()
+	players_full_name = playerName.lower().strip().split()
 	player_first_name = players_full_name[0]
 	player_last_name = players_full_name[1]
 	last_name_initial = player_last_name[0]
@@ -56,9 +55,9 @@ def main():
 				correct_player = True
 			else: 
 				player_id+=1
+	#now we need the data for the players (these will start with career statistics
 
 
-	#now we need the data for the players (these will start with career statistics)
 
 	salary_table = page_soup.find('table')
 
@@ -105,7 +104,7 @@ def getCurrentTeam(player_page_url):
 	dict_teams = {'Arizona Diamondbacks':'ARI','Atlanta Braves':'ATL','Baltimore Orioles':'BAL','Boston Red Sox':'BOS','Chicago Cubs':'CHC','Chicago White Sox':'CWS','Cincinnati Reds':'CIN',
 	'Cleveland Indians':'CLE','Colorado Rockies':'COL','Detroit Tigers':'DET','Florida Marlins':'FLA','Houston Astros':'HOU','Kansas City Royals':'KAN','Los Angeles Angels of Anaheim':'LAA','Los Angeles Dodgers':'LAD',
 	'Milwaukee Brewers':'MIL','Minnesota Twins':'MIN','New York Mets':'NYM','New York Yankees':'NYY','Oakland Athletics':'OAK','Philadelphia Phillies':'PHI','Pittsburgh Pirates':'PIT',
-	'San Diego Padre': 'SD','San Francisco Giant': 'SF','Seattle Mariners':'SEA','St. Louis Cardinals':'STL','Tampa Bay Ray': 'TB','Texas Rangers':'TEX','Toronto Blue Jays':'TOR','Washington Nationals':'WAS'}
+	'San Diego Padres': 'SD','San Francisco Giants': 'SF','Seattle Mariners':'SEA','St. Louis Cardinals':'STL','Tampa Bay Ray': 'TB','Texas Rangers':'TEX','Toronto Blue Jays':'TOR','Washington Nationals':'WAS'}
 
 	team_abbrev = dict_teams[player_team]
 
@@ -129,4 +128,3 @@ def getPosition(player_page_url):
 
 	return player_position
 	
-main()
