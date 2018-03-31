@@ -66,7 +66,6 @@ def getTotalContractValue(playerName):
 
 	return salary
 
-
 #finds num of years contract is active for (INTEGER)
 def getContractLength(playerName):
 
@@ -135,24 +134,26 @@ def getStatsBeforeSigning(playerName):
 	full_name = playerName.replace(" ", "")
 	player_stats = pd.read_csv('battingStatsPlayers/' + full_name.lower() + getPlayerTeam(playerName) + ".csv")
 
-	# year_signed = getContractSignYear(playerName) - 1
+	year_signed = getContractSignYear(playerName) - 1
 
-	# indx = player_stats[player_stats['Year']==year_signed].index.item()
-	# adjusted_player_stats = player_stats[indx]
+	indx = player_stats[player_stats['Year'].astype(int)==year_signed].index.item()
 
+	adjusted_stats = player_stats.ix[~(player_stats['Year'] > year_signed)]
+		
 
-	return player_stats
+	return adjusted_stats
 
 def main():
 
 	getSalaryData()
 	user_input = input("Enter player who's salary you wish to see: ")
-	getStatsBeforeSigning(user_input)
+	print(getStatsBeforeSigning(user_input))
 	print()
 	print("Total Contract value:",getTotalContractValue(user_input))
 	print("Salary Years:",getContractYears(user_input))
 	print("Year Contract Signed:",getContractSignYear(user_input))
 	print("Contract length:",getContractLength(user_input))
 	print("Team:",getPlayerTeam(user_input))
+
 
 main()
