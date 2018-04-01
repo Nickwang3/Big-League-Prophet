@@ -1,62 +1,47 @@
 import bs4
 import re
 from urllib.request import urlopen as uReq
+from urllib.request import urlretrieve
 from bs4 import BeautifulSoup as soup
-from selenium import webdriver
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 import csv
+import requests
+import pandas as pd 
+
+#scrapes player id csv file from given website
+def getPlayerIDS():
+
+	url = 'http://crunchtimebaseball.com/baseball_map.html'
+
+	data = requests.get('http://crunchtimebaseball.com/master.csv').text
+
+	with open('playerIDS/IDS.csv', 'w', encoding='utf8') as file:
+   		file.write(data)
+
+
 
 #grabs players baseball reference page and downloads their stats
-def getPlayersStats(playerName):
+def getPlayersStats(brefID):
 	
-	#user input for finding players statistics off of Baseball Reference
-	player_id = 1   #used to identify multiple players with similar url name
-	players_full_name = playerName.lower().strip().split()
-	player_first_name = players_full_name[0]
-	player_last_name = players_full_name[1]
-	last_name_initial = player_last_name[0]
-	correct_player = False
 
-	#still need to fix if user goes over iput limit and gets to error 404 not found
-	while(correct_player==False):
+	my_url = "https://www.baseball-reference.com/players/" + brefID[0] + "/" + brefID + ".shtml"
 
-		player_name = player_last_name[:5] + player_first_name[:2] + "0" + str(player_id)
-		my_url = "https://www.baseball-reference.com/players/" + last_name_initial + "/" + player_name + ".shtml"
+	#downloading web page from url
+	uClient = uReq(my_url)
+	page_html = uClient.read()
+	uClient.close()
 
-		#downloading web page from url
-		uClient = uReq(my_url)
-		page_html = uClient.read()
-		uClient.close()
+	#html parsing
+	page_soup = soup(page_html, "html.parser")
 
-		#html parsing
-		page_soup = soup(page_html, "html.parser")
+	containers = page_soup.findAll("h1", {"itemprop":"name"})
+	container_player_name = containers[0].text
+	print()
+	print(container_player_name)
+	print()
+	#calls getPosition method
+	print(getPosition(my_url))
 
-		containers = page_soup.findAll("h1", {"itemprop":"name"})
-		container_player_name = containers[0].text
-		print()
-		print(container_player_name)
-		print()
-		#calls getPosition method
-		print(getPosition(my_url))
-
-
-		#ask if given player is correct player
-		user_answer = 'null'
-		while user_answer != 'yes' and user_answer!= 'no':
-			
-			user_answer = input("Is this the correct player? Enter Yes or No: ").lower()
-			print()
-
-			if user_answer == 'yes':
-				correct_player = True
-			else: 
-				player_id+=1
 	#now we need the data for the players (these will start with career statistics
-
 
 
 	salary_table = page_soup.find('table')
@@ -77,7 +62,7 @@ def getPlayersStats(playerName):
 		rows.append(row)
 
 	#creating a new file naming scheme to work with other scripts 
-	player_file_name = player_first_name + player_last_name + getCurrentTeam(my_url)
+	player_file_name = brefID + getCurrentTeam(my_url)
 
 	#writing the csv file
 	with open('battingStatsPlayers/' + player_file_name +'.csv', 'w', encoding='utf8') as fp:
@@ -127,4 +112,4 @@ def getPosition(player_page_url):
 	player_position = player_position[indx_replacer+1:].strip()
 
 	return player_position
-	
+
