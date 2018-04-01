@@ -33,7 +33,6 @@ def getPlayerID(playerName, teamAbbrev):
 
 	return bref_id
 
-
 #finds the players current team (STRING)
 def getPlayerTeam(playerName):
 
@@ -51,6 +50,33 @@ def getPlayerTeam(playerName):
 		return
 
 	return team
+
+#finds the players position
+def getPlayerPos(playerName):
+
+	#check if player entered is in data base
+	if playerName in salary_data.Name.values:
+
+		indx = salary_data[salary_data['Name']==playerName].index.item()
+		position = salary_data.at[indx, 'POS']
+		position = str(team.strip())
+
+	else:
+
+		print()
+		print("Player not found")
+		return
+
+	return position
+
+#return true if pitcher
+def isPitcher(playerName):
+
+	pos = getPlayerPos(playerName)
+
+	if pos == 'RP' or pos == 'SP':
+		return True 
+	return False
 
 #finds a players current salary value for current year in (INTEGER)
 def getCurrentYearSalary(playerName):
