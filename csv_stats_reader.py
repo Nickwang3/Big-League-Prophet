@@ -93,7 +93,7 @@ def getPlayerPos(playerName):
 
 		indx = salary_data[salary_data['Name']==playerName].index.item()
 		position = salary_data.at[indx, 'POS']
-		position = str(team.strip())
+		position = str(position.strip())
 
 	else:
 
@@ -215,7 +215,7 @@ def getStatsBeforeSigning(playerName, teamAbbrev):
 	getPlayersStats(bref_id)
 
 	full_name = playerName.replace(" ", "")
-	player_stats = pd.read_csv('battingStatsPlayers/' + bref_id + teamAbbrev + ".csv")
+	player_stats = pd.read_csv('baseballStatsPlayers/' + bref_id + teamAbbrev + ".csv")
 
 	year_signed = getContractSignYear(playerName) - 1
 
@@ -223,9 +223,12 @@ def getStatsBeforeSigning(playerName, teamAbbrev):
 
 	adjusted_stats = player_stats.ix[~(player_stats['Year'] > year_signed)]
 
-	#cuts off excess stats that are not needed and error filled stats
-	trimmed_stats = adjusted_stats.iloc[0:, 0:30]
-	
+	#cuts off excess stats that are not needed and error filled stats (different based on pitcher or hitter)
+	if isPitcher(playerName) == False:
+		trimmed_stats = adjusted_stats.iloc[0:, 0:30]
+	if isPitcher(playerName) == True:
+		trimmed_stats = adjusted_stats.iloc[0:, 0:35]
+
 	return trimmed_stats
 
 def main():
@@ -249,7 +252,7 @@ def main():
 
 	randomPlayerName = getRandomPlayer.player
 	playerTeam = getRandomPlayer.team
-	getStatsBeforeSigning(randomPlayerName, playerTeam)
+	print(getStatsBeforeSigning(randomPlayerName, playerTeam))
 	print()
 	print("Total Contract value:",getTotalContractValue(randomPlayerName))
 	print("Salary Years:",getContractYears(randomPlayerName))
