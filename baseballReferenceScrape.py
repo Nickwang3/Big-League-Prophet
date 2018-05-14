@@ -65,7 +65,7 @@ def getPlayersStats(brefID):
 	player_file_name = brefID + getCurrentTeam(my_url)
 
 	#writing the csv file
-	with open('battingStatsPlayers/' + player_file_name +'.csv', 'w', encoding='utf8') as fp:
+	with open('baseballStatsPlayers/' + player_file_name +'.csv', 'w', encoding='utf8') as fp:
 	    writer = csv.writer(fp)
 	    writer.writerow(headers)
 	    writer.writerows(row for row in rows if row)
