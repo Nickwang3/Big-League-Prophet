@@ -4,7 +4,7 @@ from baseballReferenceScrape import getPlayersStats, getPlayerIDS
 from salaryScraper import getSalaryData
 import io
 import csv
-
+import random
 
 #creating panda data frames for player id search and salary data search
 salary_data = pd.read_csv('salary_data/salary_data.csv')
@@ -12,8 +12,42 @@ salary_data = pd.read_csv('salary_data/salary_data.csv')
 player_IDS = pd.read_csv('playerIDS/IDS.csv', encoding='ANSI')
 
 
+#creates a list of all players with mlb contracts to be used for machine learning sample data POSSIBLY CHANGE SEARCH METHOD TO USE THIS DICTIONARY FASTER
+def getActivePlayerList():
+
+	dict_of_active_players = {}
+
+	list_of_active_players = []
+	list_of_player_teams = []
+
+	for playerName in salary_data.Name.values:
+
+		list_of_active_players.append(playerName)
+
+	for team in salary_data.Team.values:
+
+		list_of_player_teams.append(team)
+
+	count = 0
+	for player in list_of_active_players:
+
+		dict_of_active_players[player] = list_of_player_teams[count]
+		count+=1
+
+	return dict_of_active_players
+
+#grabs a random active player. can be used as sample data for machine learning
+def getRandomPlayer():
+
+	dicts = getActivePlayerList()
+
+	getRandomPlayer.player, getRandomPlayer.team = random.choice(list(dicts.items()))
+
+
+
 #below are the get methods for retrieving data from the data bases
 #these will be called to retrive data in the easiest way possible
+
 
 #gets the id of a specific player
 def getPlayerID(playerName, teamAbbrev):
@@ -104,7 +138,7 @@ def getTotalContractValue(playerName):
 
 		indx = salary_data[salary_data['Name']==playerName].index.item()
 		salary = salary_data.at[indx, 'Total Value']
-		salary = int(salary[2:].replace(",", ""))
+		salary = int(salary[1:].replace(",", ""))
 
 	else:
 
@@ -188,22 +222,40 @@ def getStatsBeforeSigning(playerName, teamAbbrev):
 	indx = player_stats[player_stats['Year'].astype(int)==year_signed].index.item()
 
 	adjusted_stats = player_stats.ix[~(player_stats['Year'] > year_signed)]
-		
-	return adjusted_stats
+
+	#cuts off excess stats that are not needed and error filled stats
+	trimmed_stats = adjusted_stats.iloc[0:, 0:30]
+	
+	return trimmed_stats
 
 def main():
 
 	getPlayerIDS()
 	getSalaryData()
-	user_input_name = input("Enter player who's salary you wish to see: ")
-	user_input_team = input("Enter player's team abbreviation (ex - BOS for Boston): ")
-	getStatsBeforeSigning(user_input_name, user_input_team)
+	getActivePlayerList()
+	getRandomPlayer()
+
+	#below is user input program (commented out) vs an automated random selection of a player
+
+	# user_input_name = input("Enter player who's salary you wish to see: ")
+	# user_input_team = input("Enter player's team abbreviation (ex - BOS for Boston): ")
+	# getStatsBeforeSigning(user_input_name, user_input_team)
+	# print()
+	# print("Total Contract value:",getTotalContractValue(user_input_name))
+	# print("Salary Years:",getContractYears(user_input_name))
+	# print("Year Contract Signed:",getContractSignYear(user_input_name))
+	# print("Contract length:",getContractLength(user_input_name))
+	# print("Team:",getPlayerTeam(user_input_name))
+
+	randomPlayerName = getRandomPlayer.player
+	playerTeam = getRandomPlayer.team
+	getStatsBeforeSigning(randomPlayerName, playerTeam)
 	print()
-	print("Total Contract value:",getTotalContractValue(user_input_name))
-	print("Salary Years:",getContractYears(user_input_name))
-	print("Year Contract Signed:",getContractSignYear(user_input_name))
-	print("Contract length:",getContractLength(user_input_name))
-	print("Team:",getPlayerTeam(user_input_name))
+	print("Total Contract value:",getTotalContractValue(randomPlayerName))
+	print("Salary Years:",getContractYears(randomPlayerName))
+	print("Year Contract Signed:",getContractSignYear(randomPlayerName))
+	print("Contract length:",getContractLength(randomPlayerName))
+	print("Team:",getPlayerTeam(randomPlayerName))
 	
 
 

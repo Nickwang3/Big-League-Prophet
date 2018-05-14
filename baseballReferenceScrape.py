@@ -89,7 +89,7 @@ def getCurrentTeam(player_page_url):
 	dict_teams = {'Arizona Diamondbacks':'ARI','Atlanta Braves':'ATL','Baltimore Orioles':'BAL','Boston Red Sox':'BOS','Chicago Cubs':'CHC','Chicago White Sox':'CWS','Cincinnati Reds':'CIN',
 	'Cleveland Indians':'CLE','Colorado Rockies':'COL','Detroit Tigers':'DET','Miami Marlins':'MIA','Houston Astros':'HOU','Kansas City Royals':'KC','Los Angeles Angels of Anaheim':'LAA','Los Angeles Dodgers':'LAD',
 	'Milwaukee Brewers':'MIL','Minnesota Twins':'MIN','New York Mets':'NYM','New York Yankees':'NYY','Oakland Athletics':'OAK','Philadelphia Phillies':'PHI','Pittsburgh Pirates':'PIT',
-	'San Diego Padres': 'SD','San Francisco Giants': 'SF','Seattle Mariners':'SEA','St. Louis Cardinals':'STL','Tampa Bay Ray': 'TB','Texas Rangers':'TEX','Toronto Blue Jays':'TOR','Washington Nationals':'WSH'}
+	'San Diego Padres': 'SD','San Francisco Giants': 'SF','Seattle Mariners':'SEA','St. Louis Cardinals':'STL','Tampa Bay Rays': 'TB','Texas Rangers':'TEX','Toronto Blue Jays':'TOR','Washington Nationals':'WSH', 'Los Angeles Angels':'LAA'}
 
 	team_abbrev = dict_teams[player_team]
 
