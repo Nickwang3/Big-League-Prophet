@@ -20,10 +20,12 @@ def getActivePlayerList():
 	list_of_active_players = []
 	list_of_player_teams = []
 
+	#creating list of players as keys
 	for playerName in salary_data.Name.values:
 
 		list_of_active_players.append(playerName)
 
+	#creating list of player's teams 
 	for team in salary_data.Team.values:
 
 		list_of_player_teams.append(team)
