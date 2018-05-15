@@ -5,7 +5,7 @@ from salaryScraper import getSalaryData
 import io
 import csv
 import random
-
+from playerAndContract import Player, Contract
 #creating panda data frames for player id search and salary data search
 salary_data = pd.read_csv('salary_data/salary_data.csv')
 
@@ -240,6 +240,38 @@ def getAgeAtSigning(playerName, teamAbbrev):
 	return age
 
 
+# gets the players standard stats  (DATAFRAME)
+def getStats(playerName, teamAbbrev):
+
+	bref_id = getPlayerID(playerName, teamAbbrev)
+	getPlayersStats(bref_id)
+
+	full_name = playerName.replace(" ", "")
+
+	#looks for player stats file in folder
+	try:
+		player_stats = pd.read_csv('baseballStatsPlayers/' + bref_id + teamAbbrev + ".csv")
+	except (FileNotFoundError, TypeError):
+		print("That player has changed teams recently or does not exist")
+		return
+
+	year_signed = getContractSignYear(playerName) - 1
+
+	#checks if player has stats before being signed
+	try:
+		indx = player_stats[player_stats['Year'].astype(int)==year_signed].index.item()
+	except ValueError:
+		print("This player has no stats from previous years")
+		return
+
+	#cuts off excess stats that are not needed and error filled stats (different based on pitcher or hitter)
+	if isPitcher(playerName) == False:
+		trimmed_stats = player_stats.iloc[0:, 0:30]
+	if isPitcher(playerName) == True:
+		trimmed_stats = player_stats.iloc[0:, 0:35]
+
+	return trimmed_stats
+
 # gets the players stats from the years prior to the signing of the newest contract (DATAFRAME)
 def getStatsBeforeSigning(playerName, teamAbbrev):
 
@@ -274,33 +306,45 @@ def getStatsBeforeSigning(playerName, teamAbbrev):
 
 	return trimmed_stats
 
-#ways of running the program
-def runUsingUserInput():
 
-	user_input_name = input("Enter player who's salary you wish to see: ")
-	user_input_team = input("Enter player's team abbreviation (ex - BOS for Boston): ")
-	getStatsBeforeSigning(user_input_name, user_input_team)
-	print()
-	print("Total Contract value:",getTotalContractValue(user_input_name))
-	print("Salary Years:",getContractYears(user_input_name))
-	print("Year Contract Signed:",getContractSignYear(user_input_name))
-	print("Contract length:",getContractLength(user_input_name))
-	print("Team:",getPlayerTeam(user_input_name))
+#will only be used inside playerObjectFunction
+def createContractObject(playerName, teamAbbrev):
 
-def runUsingScript():
+	length = getContractLength(playerName)
+	years = getContractYears(playerName)
+	total_value = getTotalContractValue(playerName)
+	current_salary = getCurrentYearSalary(playerName)
+	sign_year = getContractSignYear(playerName)
+	age_at_signing = getAgeAtSigning(playerName, teamAbbrev)
+
+	contract = Contract(length, years, total_value, current_salary, sign_year, age_at_signing)
+
+	return contract
+
+
+#creates an mlb player object 
+def createPlayerObject():
 
 	getRandomPlayer()
-	randomPlayerName = getRandomPlayer.player
-	playerTeam = getRandomPlayer.team
-	runUsingScript.age = getAgeAtSigning(randomPlayerName, playerTeam)
-	runUsingScript.contract_length = getContractLength(randomPlayerName)
-	runUsingScript.stats = getStatsBeforeSigning(randomPlayerName, playerTeam)
-	# print()
-	# print("Total Contract value:",getTotalContractValue(randomPlayerName))
-	# print("Salary Years:",getContractYears(randomPlayerName))
-	# print("Year Contract Signed:",getContractSignYear(randomPlayerName))
-	# print("Contract length:",getContractLength(randomPlayerName))
-	# print("Team:",getPlayerTeam(randomPlayerName))
+	name = getRandomPlayer.player
+	team = getRandomPlayer.team
+	free_agent = False
+	stats = getStats(name, team)
+	stats_before_signing = getStatsBeforeSigning(name, team)
+	position = getPlayerPos(name)
+
+	#calls the contract method to create contract object for player
+	contract = createContractObject(name, team)
+
+
+	player = name+team
+	#creating the player object
+	player = Player(name, team, free_agent, stats, stats_before_signing, position, contract)
+
+	return player
+
+
+
 
 def main():
 
@@ -310,9 +354,14 @@ def main():
 
 	#below is user input program (commented out) vs an automated random selection of a player
 
-	for i in range(5):
 
-		runUsingScript()
+	player1 = createPlayerObject()
+	print(player1.name)
+	print(player1.stats)
+	print(player1.free_agent)
+	print(player1.contract.length)
+	print(player1.contract.total_value)
+	print(player1.contract.age_at_signing)
 	
 
 
