@@ -210,6 +210,36 @@ def getContractSignYear(playerName):
 
 	return year_signed
 
+#finds age at signing contract
+def getAgeAtSigning(playerName, teamAbbrev):
+
+	bref_id = getPlayerID(playerName, teamAbbrev)
+	getPlayersStats(bref_id)
+
+	full_name = playerName.replace(" ", "")
+
+	#looks for player stats file in folder
+	try:
+		player_stats = pd.read_csv('baseballStatsPlayers/' + bref_id + teamAbbrev + ".csv")
+	except (FileNotFoundError, TypeError):
+		print("That player has changed teams recently or does not exist")
+		return
+
+	year_signed = getContractSignYear(playerName) - 1
+
+	#checks if player has stats before being signed
+	try:
+		indx = player_stats[player_stats['Year'].astype(int)==year_signed].index.item()
+	except ValueError:
+		# print("This player has no stats from previous years")
+		return
+
+	#used for age analysis
+	age = player_stats.loc[indx, 'Age']
+
+	return age
+
+
 # gets the players stats from the years prior to the signing of the newest contract (DATAFRAME)
 def getStatsBeforeSigning(playerName, teamAbbrev):
 
@@ -221,7 +251,7 @@ def getStatsBeforeSigning(playerName, teamAbbrev):
 	#looks for player stats file in folder
 	try:
 		player_stats = pd.read_csv('baseballStatsPlayers/' + bref_id + teamAbbrev + ".csv")
-	except FileNotFoundError:
+	except (FileNotFoundError, TypeError):
 		print("That player has changed teams recently or does not exist")
 		return
 
@@ -259,15 +289,18 @@ def runUsingUserInput():
 
 def runUsingScript():
 
+	getRandomPlayer()
 	randomPlayerName = getRandomPlayer.player
 	playerTeam = getRandomPlayer.team
-	print(getStatsBeforeSigning(randomPlayerName, playerTeam))
-	print()
-	print("Total Contract value:",getTotalContractValue(randomPlayerName))
-	print("Salary Years:",getContractYears(randomPlayerName))
-	print("Year Contract Signed:",getContractSignYear(randomPlayerName))
-	print("Contract length:",getContractLength(randomPlayerName))
-	print("Team:",getPlayerTeam(randomPlayerName))
+	runUsingScript.age = getAgeAtSigning(randomPlayerName, playerTeam)
+	runUsingScript.contract_length = getContractLength(randomPlayerName)
+	runUsingScript.stats = getStatsBeforeSigning(randomPlayerName, playerTeam)
+	# print()
+	# print("Total Contract value:",getTotalContractValue(randomPlayerName))
+	# print("Salary Years:",getContractYears(randomPlayerName))
+	# print("Year Contract Signed:",getContractSignYear(randomPlayerName))
+	# print("Contract length:",getContractLength(randomPlayerName))
+	# print("Team:",getPlayerTeam(randomPlayerName))
 
 def main():
 
@@ -277,9 +310,8 @@ def main():
 
 	#below is user input program (commented out) vs an automated random selection of a player
 
-	for i in range(21):
+	for i in range(5):
 
-		getRandomPlayer()
 		runUsingScript()
 	
 

@@ -38,11 +38,11 @@ def getPlayersStats(brefID):
 
 	containers = page_soup.findAll("h1", {"itemprop":"name"})
 	container_player_name = containers[0].text
-	print()
-	print(container_player_name)
-	print()
+	# print()
+	# print(container_player_name)
+	# print()
 	#calls getPosition method
-	print(getPosition(my_url))
+	# print(getPosition(my_url))
 
 	#now we need the data for the players (these will start with career statistics
 
@@ -65,7 +65,10 @@ def getPlayersStats(brefID):
 		rows.append(row)
 
 	#creating a new file naming scheme to work with other scripts 
-	player_file_name = brefID + getCurrentTeam(my_url)
+	try:
+		player_file_name = brefID + getCurrentTeam(my_url)
+	except TypeError:
+		return
 
 	#writing the csv file
 	with open('baseballStatsPlayers/' + player_file_name +'.csv', 'w', encoding='utf8') as fp:
@@ -94,7 +97,12 @@ def getCurrentTeam(player_page_url):
 	'Milwaukee Brewers':'MIL','Minnesota Twins':'MIN','New York Mets':'NYM','New York Yankees':'NYY','Oakland Athletics':'OAK','Philadelphia Phillies':'PHI','Pittsburgh Pirates':'PIT',
 	'San Diego Padres': 'SD','San Francisco Giants': 'SF','Seattle Mariners':'SEA','St. Louis Cardinals':'STL','Tampa Bay Rays': 'TB','Texas Rangers':'TEX','Toronto Blue Jays':'TOR','Washington Nationals':'WSH', 'Los Angeles Angels':'LAA'}
 
-	team_abbrev = dict_teams[player_team]
+	team_abbrev = ""
+	try:
+		team_abbrev = dict_teams[player_team]
+	except KeyError:
+		print("Player is a free agent")
+		return
 
 	return team_abbrev
 
