@@ -217,15 +217,22 @@ def getStatsBeforeSigning(playerName, teamAbbrev):
 	getPlayersStats(bref_id)
 
 	full_name = playerName.replace(" ", "")
-	player_stats = pd.read_csv('baseballStatsPlayers/' + bref_id + teamAbbrev + ".csv")
+
+	#looks for player stats file in folder
+	try:
+		player_stats = pd.read_csv('baseballStatsPlayers/' + bref_id + teamAbbrev + ".csv")
+	except FileNotFoundError:
+		print("That player has changed teams recently or does not exist")
+		return
 
 	year_signed = getContractSignYear(playerName) - 1
 
+	#checks if player has stats before being signed
 	try:
 		indx = player_stats[player_stats['Year'].astype(int)==year_signed].index.item()
 	except ValueError:
 		print("This player has no stats from previous years")
-		exit()
+		return
 
 	adjusted_stats = player_stats.ix[~(player_stats['Year'] > year_signed)]
 
@@ -271,7 +278,7 @@ def main():
 	#below is user input program (commented out) vs an automated random selection of a player
 
 	for i in range(21):
-		
+
 		getRandomPlayer()
 		runUsingScript()
 	

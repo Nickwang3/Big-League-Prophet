@@ -22,8 +22,11 @@ def getPlayerIDS():
 #grabs players baseball reference page and downloads their stats
 def getPlayersStats(brefID):
 	
-
-	my_url = "https://www.baseball-reference.com/players/" + brefID[0] + "/" + brefID + ".shtml"
+	try:
+		my_url = "https://www.baseball-reference.com/players/" + brefID[0] + "/" + brefID + ".shtml"
+	except TypeError:
+		print("That player has changed teams recently or does not exist")
+		return
 
 	#downloading web page from url
 	uClient = uReq(my_url)
