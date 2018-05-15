@@ -14,7 +14,7 @@ class Player(object):
 	
 	"""
 
-	def __init__(self, name, team, free_agent, stats, stats_before_signing, position, contract):
+	def __init__(self, name, team, free_agent, stats, stats_before_signing, position, contract, age_at_signing):
 		#Returns players attributes
 		self.name = name
 		self.team = team
@@ -23,6 +23,7 @@ class Player(object):
 		self.stats_before_signing = stats_before_signing
 		self.position = position
 		self.contract = contract
+		self.age_at_signing = age_at_signing
 
 
 
@@ -40,11 +41,10 @@ class Contract(object):
 
 	"""
 
-	def __init__(self, length, years, total_value, current_salary, sign_year, age_at_signing):
+	def __init__(self, length, years, total_value, current_salary, sign_year):
 		#returns contract attributes
 		self.length = length
 		self.years = years
 		self.total_value = total_value
 		self.current_salary = current_salary
 		self.sign_year = sign_year
-		self.age_at_signing = age_at_signing

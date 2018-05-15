@@ -255,14 +255,6 @@ def getStats(playerName, teamAbbrev):
 		print("That player has changed teams recently or does not exist")
 		return
 
-	year_signed = getContractSignYear(playerName) - 1
-
-	#checks if player has stats before being signed
-	try:
-		indx = player_stats[player_stats['Year'].astype(int)==year_signed].index.item()
-	except ValueError:
-		print("This player has no stats from previous years")
-		return
 
 	#cuts off excess stats that are not needed and error filled stats (different based on pitcher or hitter)
 	if isPitcher(playerName) == False:
@@ -296,6 +288,8 @@ def getStatsBeforeSigning(playerName, teamAbbrev):
 		print("This player has no stats from previous years")
 		return
 
+	age = player_stats.loc[indx, 'Age']
+
 	adjusted_stats = player_stats.ix[~(player_stats['Year'] > year_signed)]
 
 	#cuts off excess stats that are not needed and error filled stats (different based on pitcher or hitter)
@@ -304,20 +298,19 @@ def getStatsBeforeSigning(playerName, teamAbbrev):
 	if isPitcher(playerName) == True:
 		trimmed_stats = adjusted_stats.iloc[0:, 0:35]
 
-	return trimmed_stats
+	return trimmed_stats, age
 
 
 #will only be used inside playerObjectFunction
-def createContractObject(playerName, teamAbbrev):
+def createContractObject(playerName):
 
 	length = getContractLength(playerName)
 	years = getContractYears(playerName)
 	total_value = getTotalContractValue(playerName)
 	current_salary = getCurrentYearSalary(playerName)
 	sign_year = getContractSignYear(playerName)
-	age_at_signing = getAgeAtSigning(playerName, teamAbbrev)
 
-	contract = Contract(length, years, total_value, current_salary, sign_year, age_at_signing)
+	contract = Contract(length, years, total_value, current_salary, sign_year)
 
 	return contract
 
@@ -327,19 +320,20 @@ def createPlayerObject():
 
 	getRandomPlayer()
 	name = getRandomPlayer.player
+	print(name)                                #remove soon
 	team = getRandomPlayer.team
 	free_agent = False
 	stats = getStats(name, team)
-	stats_before_signing = getStatsBeforeSigning(name, team)
+	stats_before_signing, age_at_signing = getStatsBeforeSigning(name, team)
 	position = getPlayerPos(name)
 
 	#calls the contract method to create contract object for player
-	contract = createContractObject(name, team)
+	contract = createContractObject(name)
 
 
 	player = name+team
 	#creating the player object
-	player = Player(name, team, free_agent, stats, stats_before_signing, position, contract)
+	player = Player(name, team, free_agent, stats, stats_before_signing, position, contract, age_at_signing)
 
 	return player
 
@@ -361,7 +355,7 @@ def main():
 	print(player1.free_agent)
 	print(player1.contract.length)
 	print(player1.contract.total_value)
-	print(player1.contract.age_at_signing)
+	print(player1.age_at_signing)
 	
 
 
