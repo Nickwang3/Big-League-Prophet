@@ -221,7 +221,11 @@ def getStatsBeforeSigning(playerName, teamAbbrev):
 
 	year_signed = getContractSignYear(playerName) - 1
 
-	indx = player_stats[player_stats['Year'].astype(int)==year_signed].index.item()
+	try:
+		indx = player_stats[player_stats['Year'].astype(int)==year_signed].index.item()
+	except ValueError:
+		print("This player has no stats from previous years")
+		exit()
 
 	adjusted_stats = player_stats.ix[~(player_stats['Year'] > year_signed)]
 
@@ -233,24 +237,20 @@ def getStatsBeforeSigning(playerName, teamAbbrev):
 
 	return trimmed_stats
 
-def main():
+#ways of running the program
+def runUsingUserInput():
 
-	getPlayerIDS()
-	getSalaryData()
-	getActivePlayerList()
-	getRandomPlayer()
+	user_input_name = input("Enter player who's salary you wish to see: ")
+	user_input_team = input("Enter player's team abbreviation (ex - BOS for Boston): ")
+	getStatsBeforeSigning(user_input_name, user_input_team)
+	print()
+	print("Total Contract value:",getTotalContractValue(user_input_name))
+	print("Salary Years:",getContractYears(user_input_name))
+	print("Year Contract Signed:",getContractSignYear(user_input_name))
+	print("Contract length:",getContractLength(user_input_name))
+	print("Team:",getPlayerTeam(user_input_name))
 
-	#below is user input program (commented out) vs an automated random selection of a player
-
-	# user_input_name = input("Enter player who's salary you wish to see: ")
-	# user_input_team = input("Enter player's team abbreviation (ex - BOS for Boston): ")
-	# getStatsBeforeSigning(user_input_name, user_input_team)
-	# print()
-	# print("Total Contract value:",getTotalContractValue(user_input_name))
-	# print("Salary Years:",getContractYears(user_input_name))
-	# print("Year Contract Signed:",getContractSignYear(user_input_name))
-	# print("Contract length:",getContractLength(user_input_name))
-	# print("Team:",getPlayerTeam(user_input_name))
+def runUsingScript():
 
 	randomPlayerName = getRandomPlayer.player
 	playerTeam = getRandomPlayer.team
@@ -261,6 +261,19 @@ def main():
 	print("Year Contract Signed:",getContractSignYear(randomPlayerName))
 	print("Contract length:",getContractLength(randomPlayerName))
 	print("Team:",getPlayerTeam(randomPlayerName))
+
+def main():
+
+	getPlayerIDS()
+	getSalaryData()
+	getActivePlayerList()
+
+	#below is user input program (commented out) vs an automated random selection of a player
+
+	for i in range(21):
+		
+		getRandomPlayer()
+		runUsingScript()
 	
 
 
