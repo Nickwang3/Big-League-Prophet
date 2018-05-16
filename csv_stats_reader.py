@@ -314,14 +314,14 @@ def createPlayerObject():
 	name = getRandomPlayer.player
 	team = getRandomPlayer.team
 
-	# print(name)																						#This line is used for testing when there are errors. It will tell me which player is breaking
+	print(name)																						#This line is used for testing when there are errors. It will tell me which player is breaking
 
 	stats = getStats(name, team)
 
 	try:
 		stats_before_signing, age_at_signing = getStatsBeforeSigning(name, team)
 	except TypeError:
-		return -1           #player has no previous stats return -1 for error
+		return -1           #player has no previous stats return null for error
 
 	position = getPlayerPos(name)
 
@@ -367,6 +367,9 @@ def main():
 	# print(getStats("Billy Hamilton", "CIN"))
 	# print(getPlayerID("Billy Hamilton", "CIN"))
 	# print(getStatsBeforeSigning("Billy Hamilton", "CIN"))
+
+	# print(getStatsBeforeSigning("Eric Hosmer", "SD"))
+
 
 
 

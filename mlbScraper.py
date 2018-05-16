@@ -21,9 +21,11 @@ def getPlayerIDS():
 #birth year of player
 def getBirthYear(player_page_url):
 
-	uClient = uReq(player_page_url)
-	page_html = uClient.read()
-	uClient.close()
+	# uClient = uReq(player_page_url)
+	# page_html = uClient.read()
+	# uClient.close()
+
+	page_html = requests.get(player_page_url).text
 
 	page_soup = soup(page_html, "html.parser")
 
@@ -36,9 +38,11 @@ def getBirthYear(player_page_url):
 #finds the players position
 def getPosition(player_page_url):
 
-	uClient = uReq(player_page_url)
-	page_html = uClient.read()
-	uClient.close()
+	# uClient = uReq(player_page_url)
+	# page_html = uClient.read()
+	# uClient.close()
+
+	page_html = requests.get(player_page_url).text
 
 	page_soup = soup(page_html, "html.parser")
 
@@ -51,9 +55,11 @@ def getPosition(player_page_url):
 #finds the players current team as initials (CURRENT PLAYERS ONLY)
 def getCurrentTeam(player_page_url):
 
-	uClient = uReq(player_page_url)
-	page_html = uClient.read()
-	uClient.close()
+	# uClient = uReq(player_page_url)
+	# page_html = uClient.read()
+	# uClient.close()
+
+	page_html = requests.get(player_page_url).text
 
 	page_soup = soup(page_html, "html.parser")
 
@@ -84,9 +90,11 @@ def getPlayersStats(espnID, playerName):
 
 
 	#downloading web page from url
-	uClient = uReq(my_url)
-	page_html = uClient.read()
-	uClient.close()
+	# uClient = uReq(my_url)
+	# page_html = uClient.read()
+	# uClient.close()
+
+	page_html = requests.get(my_url).text
 
 	#html parsing
 	page_soup = soup(page_html, "html.parser")
@@ -94,6 +102,7 @@ def getPlayersStats(espnID, playerName):
 	name = page_soup.find('h1').text
 
 	#using pandas to read the career statistics
+
 	dfs = pd.read_html(my_url)
 	df = dfs[1]
 	df = df.drop(df.index[0])
@@ -113,3 +122,4 @@ def getPlayersStats(espnID, playerName):
 # print(getPlayersStats("31313", "Patrick Corbin"))
 # print(getBirthYear('http://www.espn.com/mlb/player/stats/_/id/31313/patrick-corbin'))
 # print(getPosition("http://www.espn.com/mlb/player/stats/_/id/29145/mike-aviles"))
+# print(getPlayersStats("30993", "eric hosmer"))
