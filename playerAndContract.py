@@ -14,11 +14,10 @@ class Player(object):
 	
 	"""
 
-	def __init__(self, name, team, free_agent, stats, stats_before_signing, position, contract, age_at_signing):
+	def __init__(self, name, team, stats, stats_before_signing, position, contract, age_at_signing):
 		#Returns players attributes
 		self.name = name
 		self.team = team
-		self.free_agent = free_agent
 		self.stats = stats
 		self.stats_before_signing = stats_before_signing
 		self.position = position

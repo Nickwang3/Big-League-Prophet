@@ -1,6 +1,6 @@
 import pandas as pd 
 import numpy as np
-from baseballReferenceScrape import getPlayersStats, getPlayerIDS
+from mlbScraper import getPlayersStats, getPlayerIDS, getBirthYear
 from salaryScraper import getSalaryData
 import io
 import csv
@@ -50,24 +50,38 @@ def getRandomPlayer():
 #below are the get methods for retrieving data from the data bases
 #these will be called to retrive data in the easiest way possible
 
-
 #gets the id of a specific player
 def getPlayerID(playerName, teamAbbrev):
 
-	#check if player entered is in data base
-	if playerName in player_IDS.mlb_name.values and teamAbbrev in player_IDS.mlb_team.values:
+	#check if player entered is in data base. Must check multiple name sources because sometimes there is variance
+	if playerName in player_IDS.espn_name.values and teamAbbrev in player_IDS.mlb_team.values:
+
+		indx = player_IDS[player_IDS['espn_name']==playerName].index.item()
+		espn_id = player_IDS.at[indx, 'espn_id']
+		espn_id = str(int(espn_id))
+
+	elif playerName in player_IDS.mlb_name.values and teamAbbrev in player_IDS.mlb_team.values:
 
 		indx = player_IDS[player_IDS['mlb_name']==playerName].index.item()
-		bref_id = player_IDS.at[indx, 'bref_id']
-		bref_id = str(bref_id)
+		espn_id = player_IDS.at[indx, 'espn_id']
+		espn_id = str(int(espn_id))
+
+	elif playerName in player_IDS.cbs_name.values and teamAbbrev in player_IDS.mlb_team.values:
+
+		indx = player_IDS[player_IDS['cbs_name']==playerName].index.item()
+		espn_id = player_IDS.at[indx, 'espn_id']
+		espn_id = str(int(espn_id))
 
 	else:
 
 		print()
-		print("Player or team not found")
-		return
+		print("Player not found")
+		exit()
 
-	return bref_id
+	return espn_id
+
+def get_USA_name(playerName):
+	pass
 
 #finds the players current team (STRING)
 def getPlayerTeam(playerName):
@@ -210,95 +224,66 @@ def getContractSignYear(playerName):
 
 	return year_signed
 
-#finds age at signing contract
-def getAgeAtSigning(playerName, teamAbbrev):
-
-	bref_id = getPlayerID(playerName, teamAbbrev)
-	getPlayersStats(bref_id)
-
-	full_name = playerName.replace(" ", "")
-
-	#looks for player stats file in folder
-	try:
-		player_stats = pd.read_csv('baseballStatsPlayers/' + bref_id + teamAbbrev + ".csv")
-	except (FileNotFoundError, TypeError):
-		print("That player has changed teams recently or does not exist")
-		return
-
-	year_signed = getContractSignYear(playerName) - 1
-
-	#checks if player has stats before being signed
-	try:
-		indx = player_stats[player_stats['Year'].astype(int)==year_signed].index.item()
-	except ValueError:
-		# print("This player has no stats from previous years")
-		return
-
-	#used for age analysis
-	age = player_stats.loc[indx, 'Age']
-
-	return age
-
 
 # gets the players standard stats  (DATAFRAME)
 def getStats(playerName, teamAbbrev):
 
-	bref_id = getPlayerID(playerName, teamAbbrev)
-	getPlayersStats(bref_id)
+	espn_id = getPlayerID(playerName, teamAbbrev)
+	getPlayersStats(espn_id, playerName)
 
-	full_name = playerName.replace(" ", "")
+	player_file_name = playerName.replace(" ", "-")
 
 	#looks for player stats file in folder
 	try:
-		player_stats = pd.read_csv('baseballStatsPlayers/' + bref_id + teamAbbrev + ".csv")
+		player_stats = pd.read_csv('baseballStatsPlayers/' + player_file_name + ".csv")
 	except (FileNotFoundError, TypeError):
-		print("That player has changed teams recently or does not exist")
+		print("That player does not exist")
 		return
 
+	return player_stats
 
-	#cuts off excess stats that are not needed and error filled stats (different based on pitcher or hitter)
-	if isPitcher(playerName) == False:
-		trimmed_stats = player_stats.iloc[0:, 0:30]
-	if isPitcher(playerName) == True:
-		trimmed_stats = player_stats.iloc[0:, 0:35]
-
-	return trimmed_stats
 
 # gets the players stats from the years prior to the signing of the newest contract (DATAFRAME)
 def getStatsBeforeSigning(playerName, teamAbbrev):
 
-	bref_id = getPlayerID(playerName, teamAbbrev)
-	getPlayersStats(bref_id)
+	espn_id = getPlayerID(playerName, teamAbbrev)
+	getPlayersStats(espn_id, playerName)
 
-	full_name = playerName.replace(" ", "")
+	player_file_name = playerName.replace(" ", "-")
 
 	#looks for player stats file in folder
 	try:
-		player_stats = pd.read_csv('baseballStatsPlayers/' + bref_id + teamAbbrev + ".csv")
+		player_stats = pd.read_csv('baseballStatsPlayers/' + player_file_name + ".csv")
 	except (FileNotFoundError, TypeError):
-		print("That player has changed teams recently or does not exist")
+		print("That player does not exist")
 		return
 
-	year_signed = getContractSignYear(playerName) - 1
+	year_signed = getContractSignYear(playerName)
 
-	#checks if player has stats before being signed
 	try:
-		indx = player_stats[player_stats['Year'].astype(int)==year_signed].index.item()
-	except ValueError:
-		print("This player has no stats from previous years")
-		return
+		player_stats = player_stats[(player_stats[['SEASON']] < year_signed).all(axis=1)]
+	except KeyError:
+		player_stats = player_stats[(player_stats[['YEAR']] < year_signed).all(axis=1)]
+	#checks if player has stats before being signed
+	# try:
+	# 	indx = player_stats[player_stats['YEAR'].astype(int)==year_signed].index.item()
+	# except KeyError:
+	# 	indx = player_stats[player_stats['SEASON'].astype(int)==year_signed].index.item()
+	# except ValueError:
+	# 	print("This player has no stats from previous years")
+	# 	return
 
-	age = player_stats.loc[indx, 'Age']
+	if isPitcher(playerName):
+		age = year_signed - getBirthYear('http://www.espn.com/mlb/player/stats/_/id/' + getPlayerID(playerName, teamAbbrev) + "/" + playerName)
+	else:
+		age = year_signed - getBirthYear('http://www.espn.com/mlb/player/stats/_/id/' + getPlayerID(playerName, teamAbbrev) + "/" + playerName)
 
-	adjusted_stats = player_stats.ix[~(player_stats['Year'] > year_signed)]
+	# if isPitcher(playerName):
+	# 	adjusted_stats = player_stats.ix[~(player_stats['SEASON'] > year_signed)]
+	# else:
+	# 	adjusted_stats = player_stats.ix[~(player_stats['YEAR'] > year_signed)]
 
-	#cuts off excess stats that are not needed and error filled stats (different based on pitcher or hitter)
-	if isPitcher(playerName) == False:
-		trimmed_stats = adjusted_stats.iloc[0:, 0:30]
-	if isPitcher(playerName) == True:
-		trimmed_stats = adjusted_stats.iloc[0:, 0:35]
-
-	return trimmed_stats, age
+	return player_stats, age
 
 
 #will only be used inside playerObjectFunction
@@ -320,9 +305,10 @@ def createPlayerObject():
 
 	getRandomPlayer()
 	name = getRandomPlayer.player
-	print(name)                                #remove soon
 	team = getRandomPlayer.team
-	free_agent = False
+
+	# print(name)																						This line is used for testing when there are errors. It will tell me which player is breaking
+
 	stats = getStats(name, team)
 	stats_before_signing, age_at_signing = getStatsBeforeSigning(name, team)
 	position = getPlayerPos(name)
@@ -333,13 +319,13 @@ def createPlayerObject():
 
 	player = name+team
 	#creating the player object
-	player = Player(name, team, free_agent, stats, stats_before_signing, position, contract, age_at_signing)
+	player = Player(name, team, stats, stats_before_signing, position, contract, age_at_signing)
 
 	return player
 
 
 
-
+#creates a random player object with attributes
 def main():
 
 	getPlayerIDS()
@@ -351,12 +337,20 @@ def main():
 
 	player1 = createPlayerObject()
 	print(player1.name)
-	print(player1.stats)
-	print(player1.free_agent)
+	print(player1.stats_before_signing)
 	print(player1.contract.length)
 	print(player1.contract.total_value)
 	print(player1.age_at_signing)
+	print(player1.contract.sign_year)
 	
+	# print(getStatsBeforeSigning("Mike Trout", "LAA"))
+	# print(getStatsBeforeSigning("Nathan Karns", "KC"))
+
+	# print(getStatsBeforeSigning("Tim Lincecum", "TEX"))
+	# print(getStats("Billy Hamilton", "CIN"))
+	# print(getPlayerID("Billy Hamilton", "CIN"))
+	# print(getStatsBeforeSigning("Billy Hamilton", "CIN"))
+
 
 
 main()
