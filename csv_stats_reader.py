@@ -56,32 +56,36 @@ def getRandomPlayer():
 #gets the id of a specific player
 def getPlayerID(playerName, teamAbbrev):
 
+	df = []
 	#check if player entered is in data base. Must check multiple name sources because sometimes there is variance
 	if playerName in player_IDS.espn_name.values and teamAbbrev in player_IDS.mlb_team.values:
 
-		indx = player_IDS[player_IDS['espn_name']==playerName].index.item()
-		espn_id = player_IDS.at[indx, 'espn_id']
-		espn_id = str(int(espn_id))
+		df = player_IDS[player_IDS.espn_name==playerName]
 
 	elif playerName in player_IDS.mlb_name.values and teamAbbrev in player_IDS.mlb_team.values:
 
-		indx = player_IDS[player_IDS['mlb_name']==playerName].index.item()
-		espn_id = player_IDS.at[indx, 'espn_id']
-		espn_id = str(int(espn_id))
+		df = player_IDS[player_IDS.mlb_name==playerName]
 
 	elif playerName in player_IDS.cbs_name.values and teamAbbrev in player_IDS.mlb_team.values:
 
-		indx = player_IDS[player_IDS['cbs_name']==playerName].index.item()
-		espn_id = player_IDS.at[indx, 'espn_id']
-		espn_id = str(int(espn_id))
-
+		df = player_IDS[player_IDS.cbs_name==playerName]
 	else:
+		print("player not found (Possibly changed teams recently)")
+		return -1
 
-		print()
-		print("Player not found")
-		exit()
+	#checking if there are players with the same name
+	if len(df.index) > 1:
+		for row in df.itertuples(index=True, name='Pandas'):
 
-	return espn_id
+			if str(getattr(row, "mlb_team"))==teamAbbrev:
+				return str(int(getattr(row, "espn_id")))
+	else:
+		for row in df.itertuples(index=True, name='Pandas'):
+
+			return str(int(getattr(row, "espn_id")))
+
+
+
 
 def get_USA_name(playerName):
 	pass
@@ -370,6 +374,3 @@ def main():
 
 	# print(getStatsBeforeSigning("Eric Hosmer", "SD"))
 	# print(getStatsBeforeSigning("Brad Keller","KC"))
-
-
-main()
