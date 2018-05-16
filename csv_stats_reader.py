@@ -6,6 +6,9 @@ import io
 import csv
 import random
 from playerAndContract import Player, Contract
+import pandas.io.common
+
+
 #creating panda data frames for player id search and salary data search
 salary_data = pd.read_csv('salary_data/salary_data.csv')
 
@@ -236,9 +239,9 @@ def getStats(playerName, teamAbbrev):
 	#looks for player stats file in folder
 	try:
 		player_stats = pd.read_csv('baseballStatsPlayers/' + player_file_name + ".csv")
-	except (FileNotFoundError, TypeError):
-		print("That player does not exist")
-		return
+	except (FileNotFoundError, TypeError, pandas.io.common.EmptyDataError):
+		print("That player does not exist or has no stats prior to signing")
+		return -1
 
 	return player_stats
 
@@ -247,16 +250,20 @@ def getStats(playerName, teamAbbrev):
 def getStatsBeforeSigning(playerName, teamAbbrev):
 
 	espn_id = getPlayerID(playerName, teamAbbrev)
+
 	getPlayersStats(espn_id, playerName)
 
 	player_file_name = playerName.replace(" ", "-")
 
+
 	#looks for player stats file in folder
 	try:
 		player_stats = pd.read_csv('baseballStatsPlayers/' + player_file_name + ".csv")
-	except (FileNotFoundError, TypeError):
-		print("That player does not exist")
-		return
+	except (FileNotFoundError, TypeError, pandas.io.common.EmptyDataError):
+		print("That player does not exist or has no stats prior to signing")
+		return -1
+
+
 
 	year_signed = getContractSignYear(playerName)
 
@@ -307,10 +314,15 @@ def createPlayerObject():
 	name = getRandomPlayer.player
 	team = getRandomPlayer.team
 
-	# print(name)																						This line is used for testing when there are errors. It will tell me which player is breaking
+	# print(name)																						#This line is used for testing when there are errors. It will tell me which player is breaking
 
 	stats = getStats(name, team)
-	stats_before_signing, age_at_signing = getStatsBeforeSigning(name, team)
+
+	try:
+		stats_before_signing, age_at_signing = getStatsBeforeSigning(name, team)
+	except TypeError:
+		return -1           #player has no previous stats return -1 for error
+
 	position = getPlayerPos(name)
 
 	#calls the contract method to create contract object for player
@@ -336,13 +348,18 @@ def main():
 
 
 	player1 = createPlayerObject()
-	print(player1.name)
-	print(player1.stats_before_signing)
-	print(player1.contract.length)
-	print(player1.contract.total_value)
-	print(player1.age_at_signing)
-	print(player1.contract.sign_year)
+	try:
+		print(player1.name)
+		print(player1.stats_before_signing)
+		print(player1.contract.length)
+		print(player1.contract.total_value)
+		print(player1.age_at_signing)
+		print(player1.contract.sign_year)
+	except:
+		return -1
 	
+
+	# print(getStatsBeforeSigning("Jordan Hicks", "STL"))
 	# print(getStatsBeforeSigning("Mike Trout", "LAA"))
 	# print(getStatsBeforeSigning("Nathan Karns", "KC"))
 
