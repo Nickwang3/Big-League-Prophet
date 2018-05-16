@@ -5,6 +5,6 @@ These programs save files in the corresponding directories.
 
 csv_stats_reader file contains methods for framing and retrieving data from these csv files 
 
-to run the program, run csv_stats_reader.py
+to run the program, run dataWeighting.py
 
-the program will print a random player, their stats, age of signing active contract, contract length, and contract total value
+the program will gather a random 20 players and display their WAR from the year before signing their contract and the total value of the contract that they signed

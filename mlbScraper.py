@@ -102,8 +102,10 @@ def getPlayersStats(espnID, playerName):
 	name = page_soup.find('h1').text
 
 	#using pandas to read the career statistics
-
-	dfs = pd.read_html(my_url)
+	try:
+		dfs = pd.read_html(my_url)
+	except ValueError:
+		return -1
 	df = dfs[1]
 
 
@@ -129,4 +131,3 @@ def getPlayersStats(espnID, playerName):
 # print(getBirthYear('http://www.espn.com/mlb/player/stats/_/id/31313/patrick-corbin'))
 # print(getPosition("http://www.espn.com/mlb/player/stats/_/id/29145/mike-aviles"))
 # print(getPlayersStats("30993", "eric hosmer"))
-print(getPlayersStats("32153", "Jorge Bonifacio"))

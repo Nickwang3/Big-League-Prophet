@@ -240,7 +240,7 @@ def getStats(playerName, teamAbbrev):
 	try:
 		player_stats = pd.read_csv('baseballStatsPlayers/' + player_file_name + ".csv")
 	except (FileNotFoundError, TypeError, pandas.io.common.EmptyDataError):
-		print("That player does not exist or has no stats prior to signing")
+		# print("That player does not exist or has no stats prior to signing")
 		return -1
 
 	return player_stats
@@ -260,7 +260,7 @@ def getStatsBeforeSigning(playerName, teamAbbrev):
 	try:
 		player_stats = pd.read_csv('baseballStatsPlayers/' + player_file_name + ".csv")
 	except (FileNotFoundError, TypeError, pandas.io.common.EmptyDataError):
-		print("That player does not exist or has no stats prior to signing")
+		# print("That player does not exist or has no stats prior to signing")
 		return -1
 
 
@@ -347,17 +347,17 @@ def main():
 	#below is user input program (commented out) vs an automated random selection of a player
 
 
-	player1 = createPlayerObject()
-	try:
-		print(player1.name)
-		print(player1.stats_before_signing)
-		print(player1.contract.length)
-		print(player1.contract.total_value)
-		print(player1.age_at_signing)
-		print(player1.contract.sign_year)
-	except:
-		return -1
-	
+	# player1 = createPlayerObject()
+	# try:
+	# 	print(player1.name)
+	# 	print(player1.stats_before_signing)
+	# 	print(player1.contract.length)
+	# 	print(player1.contract.total_value)
+	# 	print(player1.age_at_signing)
+	# 	print(player1.contract.sign_year)
+	# except:
+	# 	return -1
+
 
 	# print(getStatsBeforeSigning("Jordan Hicks", "STL"))
 	# print(getStatsBeforeSigning("Mike Trout", "LAA"))
@@ -369,8 +369,7 @@ def main():
 	# print(getStatsBeforeSigning("Billy Hamilton", "CIN"))
 
 	# print(getStatsBeforeSigning("Eric Hosmer", "SD"))
-
-
+	# print(getStatsBeforeSigning("Brad Keller","KC"))
 
 
 main()
