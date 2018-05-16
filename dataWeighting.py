@@ -1,6 +1,7 @@
 from csv_stats_reader import main as csv_main
 from csv_stats_reader import createPlayerObject as createPlayer
 import pandas
+from pandas import DataFrame
 import numpy
 
 # takes age of players and the length of the contracts that they sign and puts them into a new data set for testing
@@ -27,6 +28,8 @@ def ageModel():
 #takes war of last year before signing and relates it to total contract value
 def warModel():
 
+	df = DataFrame(columns=('WAR', 'TOTAL_VALUE'))
+
 	for i in range(20):
 
 		player = createPlayer()
@@ -35,8 +38,11 @@ def warModel():
 			stats = player.stats_before_signing
 			warLastSeason = stats['WAR'][stats.index[-1]]
 
-			print (warLastSeason, player.contract.total_value, player.contract.sign_year)
+			df.loc[i] = [warLastSeason,player.contract.total_value]
+			
 		except (AttributeError, IndexError):
 			print("No mlb stats available prior to signing active contract")
 
-warModel()
+	return df
+
+print(warModel())
