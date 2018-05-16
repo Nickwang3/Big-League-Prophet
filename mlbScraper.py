@@ -105,9 +105,15 @@ def getPlayersStats(espnID, playerName):
 
 	dfs = pd.read_html(my_url)
 	df = dfs[1]
-	df = df.drop(df.index[0])
-	df = df.drop(df.index[-1])
-	df = df.drop(df.index[-1])
+
+
+	df = df.drop(df.index[0]) 
+
+
+	#doesnt drop last column if player has just one year of stats
+	if len(df.index) > 2:
+		df = df.drop(df.index[-1])
+		df = df.drop(df.index[-1])
 
 	career_statistics = df
 
@@ -123,3 +129,4 @@ def getPlayersStats(espnID, playerName):
 # print(getBirthYear('http://www.espn.com/mlb/player/stats/_/id/31313/patrick-corbin'))
 # print(getPosition("http://www.espn.com/mlb/player/stats/_/id/29145/mike-aviles"))
 # print(getPlayersStats("30993", "eric hosmer"))
+print(getPlayersStats("32153", "Jorge Bonifacio"))
