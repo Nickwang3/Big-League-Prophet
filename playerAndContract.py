@@ -40,10 +40,11 @@ class Contract(object):
 
 	"""
 
-	def __init__(self, length, years, total_value, current_salary, sign_year):
+	def __init__(self, length, years, total_value, current_salary, avg_value, sign_year):
 		#returns contract attributes
 		self.length = length
 		self.years = years
 		self.total_value = total_value
 		self.current_salary = current_salary
+		self.avg_value = avg_value
 		self.sign_year = sign_year

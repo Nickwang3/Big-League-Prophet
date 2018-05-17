@@ -25,10 +25,10 @@ def ageModel():
 # ageModel()
 
 
-#takes war of last year before signing and relates it to total contract value
+#takes war of last year before signing and relates it average annual contract value
 def warModel():
 
-	df = DataFrame(columns=('WAR', 'TOTAL_VALUE'))
+	df = DataFrame(columns=('WAR', 'Avg Annual'))
 
 	for i in range(20):
 
@@ -38,11 +38,12 @@ def warModel():
 			stats = player.stats_before_signing
 			warLastSeason = stats['WAR'][stats.index[-1]]
 
-			df.loc[i] = [warLastSeason,player.contract.total_value]
-			
+			df.loc[i] = [warLastSeason,player.contract.avg_value]
+
 		except (AttributeError, IndexError):
 			print("No mlb stats available prior to signing active contract")
 
+
 	return df
 
-print(warModel())
+

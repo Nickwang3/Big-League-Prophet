@@ -86,7 +86,11 @@ def getCurrentTeam(player_page_url):
 def getPlayersStats(espnID, playerName):
 	
 	espnName = playerName.replace(" ","-")
-	my_url = 'http://www.espn.com/mlb/player/stats/_/id/' + espnID + "/" + espnName
+
+	try:
+		my_url = 'http://www.espn.com/mlb/player/stats/_/id/' + espnID + "/" + espnName
+	except (KeyError, TypeError):
+		return
 
 
 	#downloading web page from url

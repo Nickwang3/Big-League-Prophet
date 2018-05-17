@@ -153,6 +153,23 @@ def getCurrentYearSalary(playerName):
 
 	return salary
 
+def getAverageAnnualSalary(playerName):
+
+	#check if player entered is in data base
+	if playerName in salary_data.Name.values:
+
+		indx = salary_data[salary_data['Name']==playerName].index.item()
+		salary = salary_data.at[indx, 'Avg Annual']
+		salary = int(salary[1:].replace(",", ""))
+
+	else:
+
+		print()
+		print("Player not found")
+		return
+
+	return salary
+
 #finds the contracts total value
 def getTotalContractValue(playerName):
 
@@ -304,9 +321,11 @@ def createContractObject(playerName):
 	years = getContractYears(playerName)
 	total_value = getTotalContractValue(playerName)
 	current_salary = getCurrentYearSalary(playerName)
+	avg_value = getAverageAnnualSalary(playerName)
 	sign_year = getContractSignYear(playerName)
 
-	contract = Contract(length, years, total_value, current_salary, sign_year)
+
+	contract = Contract(length, years, total_value, current_salary, avg_value, sign_year)
 
 	return contract
 
