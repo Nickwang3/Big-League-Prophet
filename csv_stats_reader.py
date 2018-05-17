@@ -16,7 +16,7 @@ player_IDS = pd.read_csv('playerIDS/IDS.csv', encoding='ANSI')
 
 
 #creates a list of all players with mlb contracts to be used for machine learning sample data POSSIBLY CHANGE SEARCH METHOD TO USE THIS DICTIONARY FASTER
-def getActivePlayerList():
+def getActivePlayerDict():
 
 	dict_of_active_players = {}
 
@@ -44,7 +44,7 @@ def getActivePlayerList():
 #grabs a random active player. can be used as sample data for machine learning
 def getRandomPlayer():
 
-	dicts = getActivePlayerList()
+	dicts = getActivePlayerDict()
 
 	getRandomPlayer.player, getRandomPlayer.team = random.choice(list(dicts.items()))
 
@@ -292,14 +292,7 @@ def getStatsBeforeSigning(playerName, teamAbbrev):
 		player_stats = player_stats[(player_stats[['SEASON']] < year_signed).all(axis=1)]
 	except KeyError:
 		player_stats = player_stats[(player_stats[['YEAR']] < year_signed).all(axis=1)]
-	#checks if player has stats before being signed
-	# try:
-	# 	indx = player_stats[player_stats['YEAR'].astype(int)==year_signed].index.item()
-	# except KeyError:
-	# 	indx = player_stats[player_stats['SEASON'].astype(int)==year_signed].index.item()
-	# except ValueError:
-	# 	print("This player has no stats from previous years")
-	# 	return
+
 
 	if isPitcher(playerName):
 		age = year_signed - getBirthYear('http://www.espn.com/mlb/player/stats/_/id/' + getPlayerID(playerName, teamAbbrev) + "/" + playerName)
@@ -310,6 +303,8 @@ def getStatsBeforeSigning(playerName, teamAbbrev):
 	# 	adjusted_stats = player_stats.ix[~(player_stats['SEASON'] > year_signed)]
 	# else:
 	# 	adjusted_stats = player_stats.ix[~(player_stats['YEAR'] > year_signed)]
+	if getBirthYear('http://www.espn.com/mlb/player/stats/_/id/' + getPlayerID(playerName, teamAbbrev) + "/" + playerName) == -1:
+		age = None
 
 	return player_stats, age
 
@@ -331,20 +326,38 @@ def createContractObject(playerName):
 
 
 #creates an mlb player object 
-def createPlayerObject():
+def createPlayerObject(name, team):
 
-	getRandomPlayer()
-	name = getRandomPlayer.player
-	team = getRandomPlayer.team
+	# getRandomPlayer()
+	# name = getRandomPlayer.player
+	# team = getRandomPlayer.team																					
 
-	print(name)																						#This line is used for testing when there are errors. It will tell me which player is breaking
+	player_file_name = name.replace(" ", "-")
 
-	stats = getStats(name, team)
+	#looks for player stats file in folder
+	try:
+		player_stats = pd.read_csv('baseballStatsPlayers/' + player_file_name + ".csv")
+	except (FileNotFoundError, TypeError, pandas.io.common.EmptyDataError):
+		# print("That player does not exist or has no stats prior to signing")
+		return -1
+
+	year_signed = getContractSignYear(name)
 
 	try:
-		stats_before_signing, age_at_signing = getStatsBeforeSigning(name, team)
-	except TypeError:
-		return -1           #player has no previous stats return null for error
+		stats_before_signing = player_stats[(player_stats[['SEASON']] < year_signed).all(axis=1)]
+	except KeyError:
+		stats_before_signing = player_stats[(player_stats[['YEAR']] < year_signed).all(axis=1)]
+
+
+	if isPitcher(name):
+		age_at_signing = year_signed - getBirthYear('http://www.espn.com/mlb/player/stats/_/id/' + getPlayerID(name, team) + "/" + name)
+	else:
+		age_at_signing = year_signed - getBirthYear('http://www.espn.com/mlb/player/stats/_/id/' + getPlayerID(name, team) + "/" + name)
+
+
+	if getBirthYear('http://www.espn.com/mlb/player/stats/_/id/' + getPlayerID(name, team) + "/" + name) == -1:
+		age_at_signing = None
+
 
 	position = getPlayerPos(name)
 
@@ -354,9 +367,22 @@ def createPlayerObject():
 
 	player = name+team
 	#creating the player object
-	player = Player(name, team, stats, stats_before_signing, position, contract, age_at_signing)
+	player = Player(name, team, player_stats, stats_before_signing, position, contract, age_at_signing)
 
 	return player
+
+
+#creates all player stats files
+def createAllPlayerStats():
+
+	playerDict = getActivePlayerDict()
+
+	for playerName in playerDict:
+		team = playerDict[playerName]
+		getStats(playerName, team)
+
+
+
 
 
 
@@ -365,8 +391,8 @@ def main():
 
 	getPlayerIDS()
 	getSalaryData()
-	getActivePlayerList()
-
+	getActivePlayerDict()
+	createAllPlayerStats()
 	#below is user input program (commented out) vs an automated random selection of a player
 
 
@@ -380,16 +406,3 @@ def main():
 	# 	print(player1.contract.sign_year)
 	# except:
 	# 	return -1
-
-
-	# print(getStatsBeforeSigning("Jordan Hicks", "STL"))
-	# print(getStatsBeforeSigning("Mike Trout", "LAA"))
-	# print(getStatsBeforeSigning("Nathan Karns", "KC"))
-
-	# print(getStatsBeforeSigning("Tim Lincecum", "TEX"))
-	# print(getStats("Billy Hamilton", "CIN"))
-	# print(getPlayerID("Billy Hamilton", "CIN"))
-	# print(getStatsBeforeSigning("Billy Hamilton", "CIN"))
-
-	# print(getStatsBeforeSigning("Eric Hosmer", "SD"))
-	# print(getStatsBeforeSigning("Brad Keller","KC"))

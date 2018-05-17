@@ -1,13 +1,17 @@
 # machineLearningBaseball
 
+
 scraper files are individualy run to scrape salary data and players statistics. 
 These programs save files in the corresponding directories.
 
-csv_stats_reader file contains methods for framing and retrieving data from these csv files 
+csv_stats_reader.py file contains methods for framing and retrieving data from these csv files 
 
-to run the program, run dataWeighting.py
+run csv_stats_reader.py to update all statistics and salary data (takes approximately 15 minutes)
 
-the program will gather a random 20 players and display their WAR from the year before signing their contract and the total value of the contract that they signed
+to run the program, run salaryPredictor.py
+
+the program will ask you to enter a player's WAR (wins above replacement) from a full season and it will
+predict an annual salary value for that player
 
 
 SOURCES FOR DATA:

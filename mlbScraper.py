@@ -21,26 +21,22 @@ def getPlayerIDS():
 #birth year of player
 def getBirthYear(player_page_url):
 
-	# uClient = uReq(player_page_url)
-	# page_html = uClient.read()
-	# uClient.close()
-
 	page_html = requests.get(player_page_url).text
 
 	page_soup = soup(page_html, "html.parser")
 
 	container = page_soup.find('ul', {"class":"player-metadata floatleft"})
-	year = container.find('li').text
-	year = year.split()
+	try:
+		year = container.find('li').text
+		year = year.split()
+	except:
+		return -1
 
 	return int(year[3])
 
 #finds the players position
 def getPosition(player_page_url):
 
-	# uClient = uReq(player_page_url)
-	# page_html = uClient.read()
-	# uClient.close()
 
 	page_html = requests.get(player_page_url).text
 
@@ -55,9 +51,6 @@ def getPosition(player_page_url):
 #finds the players current team as initials (CURRENT PLAYERS ONLY)
 def getCurrentTeam(player_page_url):
 
-	# uClient = uReq(player_page_url)
-	# page_html = uClient.read()
-	# uClient.close()
 
 	page_html = requests.get(player_page_url).text
 
@@ -93,11 +86,6 @@ def getPlayersStats(espnID, playerName):
 		return
 
 
-	#downloading web page from url
-	# uClient = uReq(my_url)
-	# page_html = uClient.read()
-	# uClient.close()
-
 	page_html = requests.get(my_url).text
 
 	#html parsing
@@ -129,9 +117,3 @@ def getPlayersStats(espnID, playerName):
 	career_statistics.to_csv("baseballStatsPlayers/"+player_file_name+".csv", index=False, header=False)
 
 
-# # print(getPlayersStats("29145","Mike Aviles"))
-# print(getPlayersStats("30836", "Mike Trout"))
-# print(getPlayersStats("31313", "Patrick Corbin"))
-# print(getBirthYear('http://www.espn.com/mlb/player/stats/_/id/31313/patrick-corbin'))
-# print(getPosition("http://www.espn.com/mlb/player/stats/_/id/29145/mike-aviles"))
-# print(getPlayersStats("30993", "eric hosmer"))
