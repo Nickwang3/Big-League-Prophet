@@ -14,8 +14,9 @@ class Player(object):
 	
 	"""
 
-	def __init__(self, name, team, stats, stats_before_signing, position, contract, age_at_signing):
+	def __init__(self, espn_id, name, team, stats, stats_before_signing, position, contract, age_at_signing, service_time):
 		#Returns players attributes
+		self.espn_id = espn_id
 		self.name = name
 		self.team = team
 		self.stats = stats
@@ -23,6 +24,7 @@ class Player(object):
 		self.position = position
 		self.contract = contract
 		self.age_at_signing = age_at_signing
+		self.service_time = service_time
 
 
 

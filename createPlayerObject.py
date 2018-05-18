@@ -1,4 +1,4 @@
-from mlbScraper import getPlayersStats, getPlayerIDS, getBirthYear
+from mlbScraper import getPlayersStats, getPlayerIDS, getBirthYear, getServiceTime
 import io
 import csv
 import random
@@ -150,7 +150,7 @@ def createPlayer(playerName, teamAbbrev):
 		age_at_signing = None
 
 
-
+	service_time = getServiceTime('http://www.espn.com/mlb/player/stats/_/id/' + espn_id + "/" + playerName)
 
 	#create the contract object
 	contract = Contract(length, years_active, total_value, current_salary, avg_value, sign_year)
@@ -158,7 +158,7 @@ def createPlayer(playerName, teamAbbrev):
 	player = playerName+teamAbbrev
 
 	#creating the player object
-	player = Player(espn_id, playerName, teamAbbrev, player_stats, stats_before_signing, position, contract, age_at_signing)
+	player = Player(espn_id, playerName, teamAbbrev, player_stats, stats_before_signing, position, contract, age_at_signing, service_time)
 
 
 

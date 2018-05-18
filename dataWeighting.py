@@ -34,10 +34,17 @@ def warModel():
 
 	df = DataFrame(columns=('WAR', 'Avg Annual'))
 
-	for i in range(20):
+	for i in range(100):
 
 		name, team = getRandomPlayer()
 		player = createPlayer(name, team)
+
+		#checks if player is arbitration eligible yet (we dont want to include players who arent)
+		try:
+			if player.service_time < 5:
+				continue
+		except:
+			pass
 
 		try:
 			stats = player.stats_before_signing

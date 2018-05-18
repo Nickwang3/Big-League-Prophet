@@ -6,6 +6,10 @@ from bs4 import BeautifulSoup as soup
 import csv
 import requests
 import pandas as pd 
+import lxml
+import html5lib
+
+
 
 
 #scrapes player id csv file from given website
@@ -33,6 +37,30 @@ def getBirthYear(player_page_url):
 		return -1
 
 	return int(year[3])
+
+def getServiceTime(player_page_url):
+
+		page_html = requests.get(player_page_url).text
+
+		page_soup = soup(page_html, "html.parser")
+
+		container = page_soup.find('ul', {"class":"player-metadata floatleft"})
+
+		try:
+			li = container.find_all('li')
+		except:
+			return -1
+
+		try:
+			time = li[2].text
+			time = time.split()
+			time = time[0]
+			time = time[10:]
+			return(int(time))
+		except:
+			return -1
+
+
 
 #finds the players position
 def getPosition(player_page_url):
@@ -116,4 +144,11 @@ def getPlayersStats(espnID, playerName):
 	#writing the csv file
 	career_statistics.to_csv("baseballStatsPlayers/"+player_file_name+".csv", index=False, header=False)
 
+
+#grabs a list of all players who signed an extension or signed as a free agent
+def getFreeAgentList():
+
+	url = "https://www.mlbtraderumors.com/extensiontracker.html"
+
+	
 
