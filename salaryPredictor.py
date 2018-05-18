@@ -2,7 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-from dataWeighting import warModel
 from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, r2_score
 import locale
@@ -13,8 +12,7 @@ locale.setlocale(locale.LC_ALL, "en_US")
 def main():
 
 	trainData = pd.read_csv("trainAndTestData/trainingWAR.csv")
-	# trainData = warModel()
-	# trainData.to_csv("trainAndTestData/trainingWAR.csv", index=False, header=True)
+
 
 	regr = linear_model.LinearRegression()
 

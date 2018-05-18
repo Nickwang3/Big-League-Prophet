@@ -1,6 +1,3 @@
-# from csv_stats_reader import main as csv_main
-# from csv_stats_reader import createPlayerObject as createPlayer
-# from csv_stats_reader import getRandomPlayer
 from createPlayerObject import getRandomPlayer
 from createPlayerObject import createPlayer
 import pandas
@@ -65,13 +62,13 @@ def updateModels():
 
 
 	#update the war model
-	df = warModel(400)
+	traindfWar = warModel(400)
 
-	df.to_csv("trainAndTestData/trainingWAR.csv", index=False, header=True)
+	traindfWar.to_csv("trainAndTestData/trainingWAR.csv", index=False, header=True)
 
-	testdf = warModel(50)
+	testdfWar = warModel(50)
 
-	testdf.to_csv("trainAndTestData/testingWAR.csv", index=False, header=True)
+	testdfWar.to_csv("trainAndTestData/testingWAR.csv", index=False, header=True)
 
 
 updateModels()
