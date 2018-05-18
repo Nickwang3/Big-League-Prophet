@@ -1,5 +1,4 @@
 from mlbScraper import getPlayersStats, getPlayerIDS, getBirthYear
-from salaryScraper import getSalaryData
 import io
 import csv
 import random
