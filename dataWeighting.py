@@ -1,6 +1,6 @@
 from createPlayerObject import getRandomPlayer
 from createPlayerObject import createPlayer
-import pandas
+import pandas as pd
 from pandas import DataFrame
 import numpy
 
@@ -55,20 +55,74 @@ def warModel(iterations):
 	return df
 
 
+#determines innings, strike outs, ERA of year before signing and relates it to annual contract value
+def pos_innings_Ks_ERA_model(iterations):
+
+	df = DataFrame(columns=('POS', 'IP', 'SO', "ERA", 'Avg Annual'))
+
+	for i in range(iterations):
+
+		name, team = getRandomPlayer()
+		player = createPlayer(name, team)
+
+		try:
+			if player.service_time < 4:
+				continue
+		except:
+			pass
+
+		#checks if player is a pitcher
+		try:
+			if player.position == 'RP' or player.position == 'SP':
+		
+				stats = player.stats_before_signing
+				innings = stats['IP'][stats.index[-1]]
+				strike_outs = stats['SO'][stats.index[-1]]
+				ERA = stats['ERA'][stats.index[-1]]
+
+				df.loc[i] = [player.position, innings, strike_outs, ERA, player.contract.avg_value]
+			else:
+				continue
+
+		except (AttributeError, IndexError):
+			pass
+
+	return df
+
+
 
 #runs models and saves the train and test data
-def updateModels():
+def updateWarModel():
 
 
 
 	#update the war model
-	traindfWar = warModel(400)
+	traindfWar = warModel(500)
 
 	traindfWar.to_csv("trainAndTestData/trainingWAR.csv", index=False, header=True)
 
-	testdfWar = warModel(50)
+	testdfWar = warModel(100)
 
 	testdfWar.to_csv("trainAndTestData/testingWAR.csv", index=False, header=True)
+
+
+def updatePitcherModel():
+
+	traindfPitcher = pos_innings_Ks_ERA_model(500)
+
+	traindfPitcher.to_csv('trainAndTestData/trainingPitcher.csv')
+
+	testdfPitcher = pos_innings_Ks_ERA_model(100)
+
+	testdfPitcher.to_csv('trainAndTestData/testingPitcher.csv')
+
+
+def updateModels():
+	
+	updateWarModel()
+	updatePitcherModel()
+
+
 
 
 updateModels()
