@@ -1,6 +1,8 @@
-from csv_stats_reader import main as csv_main
-from csv_stats_reader import createPlayerObject as createPlayer
-from csv_stats_reader import getRandomPlayer
+# from csv_stats_reader import main as csv_main
+# from csv_stats_reader import createPlayerObject as createPlayer
+# from csv_stats_reader import getRandomPlayer
+from dataCompiler import getRandomPlayer
+from dataCompiler import createPlayer
 import pandas
 from pandas import DataFrame
 import numpy
@@ -32,10 +34,9 @@ def warModel():
 
 	df = DataFrame(columns=('WAR', 'Avg Annual'))
 
-	for i in range(50):
+	for i in range(20):
 
-		getRandomPlayer()
-		name, team = getRandomPlayer.player, getRandomPlayer.team
+		name, team = getRandomPlayer()
 		player = createPlayer(name, team)
 
 		try:

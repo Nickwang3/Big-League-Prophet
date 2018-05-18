@@ -39,7 +39,7 @@ def main():
 	formatted_prediction = "$"+formatted_prediction
 	
 	print()
-	print("The predicted annual salary for a player of WAR:",user_input, "is", formatted_prediction)
+	print("The predicted annual salary for a player of WAR",user_input, "is", formatted_prediction)
 
 
 	#shows the best fit line in a graph
