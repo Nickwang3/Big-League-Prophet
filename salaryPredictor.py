@@ -12,9 +12,9 @@ locale.setlocale(locale.LC_ALL, "en_US")
 
 def main():
 
-	# trainData = pd.read_csv("trainAndTestData/trainingWAR.csv")
-	trainData = warModel()
-	trainData.to_csv("trainAndTestData/trainingWAR.csv", index=False, header=True)
+	trainData = pd.read_csv("trainAndTestData/trainingWAR.csv")
+	# trainData = warModel()
+	# trainData.to_csv("trainAndTestData/trainingWAR.csv", index=False, header=True)
 
 	regr = linear_model.LinearRegression()
 

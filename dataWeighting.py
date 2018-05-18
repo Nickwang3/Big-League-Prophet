@@ -30,18 +30,18 @@ def ageModel():
 
 
 #takes war of last year before signing and relates it average annual contract value
-def warModel():
+def warModel(iterations):
 
 	df = DataFrame(columns=('WAR', 'Avg Annual'))
 
-	for i in range(100):
+	for i in range(iterations):
 
 		name, team = getRandomPlayer()
 		player = createPlayer(name, team)
 
 		#checks if player is arbitration eligible yet (we dont want to include players who arent)
 		try:
-			if player.service_time < 5:
+			if player.service_time < 4:
 				continue
 		except:
 			pass
@@ -57,4 +57,22 @@ def warModel():
 
 	return df
 
+
+
+#runs models and saves the train and test data
+def updateModels():
+
+
+
+	#update the war model
+	df = warModel(400)
+
+	df.to_csv("trainAndTestData/trainingWAR.csv", index=False, header=True)
+
+	testdf = warModel(50)
+
+	testdf.to_csv("trainAndTestData/testingWAR.csv", index=False, header=True)
+
+
+updateModels()
 

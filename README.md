@@ -10,6 +10,8 @@ mlbScraper.py is called upon by createPlayerObject.py to grab a players statisti
 
 run updatePlayerStats.py to update all statistics (takes approximately 15 minutes)
 
+run dataWeighting.py to update prediction models
+
 to run the program, run salaryPredictor.py
 
 the program will ask you to enter a player's WAR (wins above replacement) from a full season and it will
