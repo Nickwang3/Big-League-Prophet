@@ -1,8 +1,8 @@
 # from csv_stats_reader import main as csv_main
 # from csv_stats_reader import createPlayerObject as createPlayer
 # from csv_stats_reader import getRandomPlayer
-from dataCompiler import getRandomPlayer
-from dataCompiler import createPlayer
+from createPlayerObject import getRandomPlayer
+from createPlayerObject import createPlayer
 import pandas
 from pandas import DataFrame
 import numpy
