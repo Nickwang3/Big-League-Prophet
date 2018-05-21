@@ -80,11 +80,17 @@ def pos_innings_Ks_ERA_model(iterations):
 				strike_outs = stats['SO'][stats.index[-1]]
 				ERA = stats['ERA'][stats.index[-1]]
 
-				df.loc[i] = [player.position, innings, strike_outs, ERA, player.contract.avg_value]
+				#need to have numbers for machine learning
+				if player.position == 'SP':
+					position = 1
+				else:
+					position = 0
+
+				df.loc[i] = [position, innings, strike_outs, ERA, player.contract.avg_value]
 			else:
 				continue
 
-		except (AttributeError, IndexError):
+		except (AttributeError, IndexError, KeyError):
 			pass
 
 	return df

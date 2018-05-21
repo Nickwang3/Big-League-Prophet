@@ -96,12 +96,12 @@ def predictSalaryPitcherModel():
 
 	regr = linear_model.Lasso(alpha = 0.01)
 
-	x_train = trainData[['IP', 'SO', 'ERA']]
-	x_train = x_train.values.reshape(-1,3)
+	x_train = trainData[['POS','IP', 'SO', 'ERA']]
+	x_train = x_train.values.reshape(-1,4)
 	y_train = trainData['Avg Annual'].values
 
-	x_test = testData[['IP', 'SO', 'ERA']]
-	x_test = x_test.values.reshape(-1,3)
+	x_test = testData[['POS','IP', 'SO', 'ERA']]
+	x_test = x_test.values.reshape(-1,4)
 	y_test = testData['Avg Annual'].values
 
 
@@ -109,12 +109,13 @@ def predictSalaryPitcherModel():
 
 	predictions = (regr.predict(x_test))
 
-	user_input_ip, user_input_so, user_input_era = input("Enter players IP, SO, and ERA (seperated by a space): \n").split()
+	user_input_pos, user_input_ip, user_input_so, user_input_era = input("Enter players POS (0 for RP, 1 for SP), IP, SO, and ERA (seperated by a space): \n").split()
+	pos = int(user_input_pos)
 	ip = float(user_input_ip)
 	so = float(user_input_so)
 	era = float(user_input_era)
 
-	test_var = [[ip, so, era]]
+	test_var = [[pos, ip, so, era]]
 
 	prediction = regr.predict(test_var)
 	prediction = int(prediction[0])
