@@ -1,0 +1,14 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block navbar %}
+{{nav.mynavbar.render()}}
+{% endblock %}
+
+{% block content %}
+
+<h1>Player Search </h1>
+
+{{ wtf.quick_form(form) }}
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %} {{player.name}} {% endblock %}
+
+{% block navbar %}
+{{nav.mynavbar.render()}}
+{% endblock %}
+
+{% block content %}
+  <h1> {{player.name}}</h1>
+  <h4> Team: {{player.team}} </h4>
+  <h4> Position: {{player.position}} </h4>
+
+  {{player.stats.to_html(classes="table thead-dark") | safe }}
+
+  <container id="Predictions">
+  <h2> Player Predictions </h2>
+
+  <h4> WAR Salary Prediction: {{formatted_salary}} </h4>
+
+  </container>
+
+
+
+{% endblock %}
+

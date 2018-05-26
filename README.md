@@ -12,11 +12,9 @@ run updatePlayerStats.py to update all statistics (takes approximately 15 minute
 
 run dataWeighting.py to update prediction models
 
-to run the program, run salaryPredictor.py
+to run the program, run flaskbootstrapapp.py 
 
-the program will ask you to enter a player's WAR (wins above replacement) from a full season and it will
-predict an annual salary value for that player
-
+currently the website allows user to enter a player and the team they are on and it will display their stats and a prediction for annual salary based on average war for their career
 
 
 SOURCES FOR DATA:

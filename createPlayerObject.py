@@ -129,7 +129,7 @@ def createPlayer(playerName, teamAbbrev):
 
 
 	#now grab player stats 
-	player_file_name = playerName.replace(" ", "-")
+	player_file_name = playerName.replace(" ", "-") + "#" + espn_id
 	try:
 		player_stats = pd.read_csv('baseballStatsPlayers/' + player_file_name + ".csv")
 	except (FileNotFoundError, TypeError, pandas.io.common.EmptyDataError):
@@ -163,5 +163,4 @@ def createPlayer(playerName, teamAbbrev):
 
 
 	return player
-
 

@@ -1,7 +1,6 @@
 import pandas as pd 
 import numpy as np
 from mlbScraper import getPlayersStats, getPlayerIDS, getBirthYear
-from salaryScraper import getSalaryData
 import io
 import csv
 import random
@@ -93,7 +92,7 @@ def getStats(playerName, teamAbbrev):
 	espn_id = getPlayerID(playerName, teamAbbrev)
 	getPlayersStats(espn_id, playerName)
 
-	player_file_name = playerName.replace(" ", "-")
+	player_file_name = playerName.replace(" ", "-") + "#" + espn_id
 
 	#looks for player stats file in folder
 	try:
@@ -112,7 +111,10 @@ def createAllPlayerStats():
 
 	for playerName in playerDict:
 		team = playerDict[playerName]
-		getStats(playerName, team)
+		try:
+			getStats(playerName, team)
+		except:
+			pass
 
 
 
@@ -123,7 +125,6 @@ def createAllPlayerStats():
 def main():
 
 	getPlayerIDS()
-	getSalaryData()
 	getActivePlayerDict()
 	createAllPlayerStats()
 main()

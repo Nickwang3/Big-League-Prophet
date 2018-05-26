@@ -139,7 +139,7 @@ def getPlayersStats(espnID, playerName):
 
 	career_statistics = df
 
-	player_file_name = espnName.replace(" ", "")
+	player_file_name = espnName.replace(" ", "-") + "#" + espnID
 
 	#writing the csv file
 	career_statistics.to_csv("baseballStatsPlayers/"+player_file_name+".csv", index=False, header=False)
