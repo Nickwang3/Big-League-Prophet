@@ -8,4 +8,29 @@
 
 {% block content %}
 
+
+<h1>How predictions are calculated</h1>
+
+<p>
+Predictions are calculated through the usage of different models using the python library sklearn. Data is gathered from ESPN, USA Today, and crunchtimebaseball.com. Website is built using flask-bootstrap. 
+</p>
+
+<h3>Average WAR model:</h3>
+<p>
+The Average WAR model correlates a player's average WAR before signing their active contract and the annual salary value of the contract they signed.
+This model outputs predictions on the low end of expected salaries because a player is generally paid by recent success. 
+</p>
+
+<h3>Peak WAR model:</h3>
+<p>
+The Peak WAR model relates a player's peak WAR in a single season before signing their newest contract to the annual salary value of their active contract. 
+</p>
+
+
+<h3>Age model:</h3>
+<p>
+The Age model relates a player's age at signing their contract to the length of the contract.
+</p>
+
+
 {% endblock %}

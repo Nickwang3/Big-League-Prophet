@@ -1,22 +1,26 @@
 {% extends "bootstrap/base.html" %}
 
-{% block title %} {{player.name}} {% endblock %}
+{% block title %} {{title}} {% endblock %}
 
 {% block navbar %}
 {{nav.mynavbar.render()}}
 {% endblock %}
 
 {% block content %}
-  <h1> {{player.name}}</h1>
-  <h4> Team: {{player.team}} </h4>
-  <h4> Position: {{player.position}} </h4>
+  <h1> {{player['name']}}</h1>
+  <h4> Team: {{player['team']}} </h4>
+  <h4> Position: {{player['position']}} </h4>
 
-  {{player.stats.to_html(classes="table thead-dark") | safe }}
+  {{stats.to_html(classes="table thead-dark") | safe }}
 
   <container id="Predictions">
   <h2> Player Predictions </h2>
 
-  <h4> WAR Salary Prediction: {{formatted_salary}} </h4>
+  <p>Salaries are predicted annual values for a given player</p>
+
+  <h4>Career Average WAR Salary Prediction: {{formatted_average_war_salary}} </h4>
+
+  <h4>Peak WAR Salary Prediction: {{formatted_peak_war_salary}} </h4>
 
   </container>
 
