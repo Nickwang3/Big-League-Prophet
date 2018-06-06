@@ -3,27 +3,108 @@
 {% block title %} {{title}} {% endblock %}
 
 {% block navbar %}
-{{nav.mynavbar.render()}}
+<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary"">
+  <a class="navbar-brand" href="/">Big League Prophet</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="/players">Players</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/prediction-models">Prediction Leaderboard</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/about">About</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 {% endblock %}
 
 {% block content %}
-  <h1> {{player['name']}}</h1>
-  <h4> Team: {{player['team']}} </h4>
-  <h4> Position: {{player['position']}} </h4>
 
-  {{stats.to_html(classes="table thead-dark") | safe }}
+  <h1 class="font-weight-bold p-3 mb-2 text-dark"> {{player['name']}}</h1>
+
+  {%if player['length'] != None %}
+  <h4 class="text-info ml-3 mr-3"> Team: {{player['team']}} </h4>
+  <h4 class="text-info ml-3 mr-3"> Position: {{player['position']}} </h4>
+  {%else%}
+  <h4 class="text-info ml-3 mr-3"> Player is a Free Agent or Retired </h4>
+  {%endif%}
+
+
+  {{stats.to_html(classes="table table-dark") | safe }}
+
+  {%if player['length']!=None %}
+  <h1 class="font-weight-bold p-3 mb-2 text-dark"> Contract Data: </h4>
+  <h4 class="text-info ml-3 mr-3"> Current Salary: ${{'{0:,d}'.format(player['current_salary'] | int)}} </h4>
+  <h4 class="text-info ml-3 mr-3"> Average Annual Salary: ${{'{0:,d}'.format(player['average_value'] | int)}} </h4>
+  {%if (player['length'] | int) > 1 %}
+  <h4 class="text-info ml-3 mr-3"> Contract Length: {{player['length']}} years</h4>
+  {%endif%}
+  {%if (player['length'] | int) == 1 %}
+  <h4 class="text-info ml-3 mr-3"> Contract Length: 1 year</h4>
+  {%endif%}
+  {%endif%}
 
   <container id="Predictions">
-  <h2> Player Predictions </h2>
+  <h2 class="text-primary p-3 mb-2"> Player Predictions </h2>
 
-  <p>Salaries are predicted annual values for a given player</p>
+  <p class='ml-3 mr-3'>Salaries are predicted annual values for a given player</p>
 
-  <h4>Career Average WAR Salary Prediction: {{formatted_average_war_salary}} </h4>
 
-  <h4>Peak WAR Salary Prediction: {{formatted_peak_war_salary}} </h4>
+  <div class="row justify-content-start">
+    <div class="col-sm-4">
+      <h4 class='ml-3 mr-3'>Weighted WAR Salary Prediction: ${{'{0:,d}'.format(weighted_war_salary  | int)}} </h4>
+    </div>
+    <div class="col-sm-3">
+      {% if (player['average_value'] | int ) > (player['weighted_war_salary_prediction'] | int)%}
+      <h4 class='ml-3 mr-3 text-danger'>Over Paid</h4>
+      {%endif%}
+      {% if (player['average_value'] | int ) <= (player['weighted_war_salary_prediction'] | int)%}
+      <h4 class='ml-3 mr-3 text-success'>Under Paid</h4>
+      {%endif%}
+    </div>
+  </div>
+  <div class="row justify-content-start">
+    <div class="col-sm-4">
+      <h4 class='ml-3 mr-3'>Career Average WAR Salary Prediction: ${{'{0:,d}'.format(average_war_salary  | int)}} </h4>
+    </div>
+    <div class="col-sm-3">
+      {% if (player['average_value'] | int ) > (player['average_war_salary_prediction'] | int)%}
+      <h4 class='ml-3 mr-3 text-danger'>Over Paid</h4>
+      {%endif%}
+      {% if (player['average_value'] | int ) <= (player['average_war_salary_prediction'] | int)%}
+      <h4 class='ml-3 mr-3 text-success'>Under Paid</h4>
+      {%endif%}
+    </div>
+  </div>
+  <div class="row justify-content-start">
+    <div class="col-sm-4">
+      <h4 class='ml-3 mr-3'>Peak WAR Salary Prediction: ${{'{0:,d}'.format(peak_war_salary  | int)}} </h4>
+    </div>
+    <div class="col-sm-3">
+      {% if (player['average_value'] | int ) > (peak_war_salary | int)%}
+      <h4 class='ml-3 mr-3 text-danger'>Over Paid</h4>
+      {%endif%}
+      {% if (player['average_value'] | int ) <= (peak_war_salary | int)%}
+      <h4 class='ml-3 mr-3 text-success'>Under Paid</h4>
+      {%endif%}
+    </div>
+  </div>
 
   </container>
-
 
 
 {% endblock %}

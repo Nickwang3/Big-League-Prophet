@@ -3,9 +3,67 @@
 {% block title %} About {% endblock %}
 
 {% block navbar %}
-{{nav.mynavbar.render()}}
+<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary"">
+  <a class="navbar-brand" href="/">Big League Prophet</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/players">Players</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/prediction-models">Prediction Leaderboard</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/about">About</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 {% endblock %}
 
 {% block content %}
+
+<!-- <div class="row">
+  <div class="col-4">
+    <div class="list-group" id="list-tab" role="tablist">
+      <a class="list-group-item list-group-item-action active" id="list-average_war-list" data-toggle="list" href="#list-average_war" role="tab" aria-controls="average_war">Average WAR Model</a>
+      <a class="list-group-item list-group-item-action" id="list-peak_war-list" data-toggle="list" href="#list-peak_war" role="tab" aria-controls="peak_war">Peak WAR Model</a>
+      <a class="list-group-item list-group-item-action" id="list-trip_crown-list" data-toggle="list" href="#list-trip_crown" role="tab" aria-controls="trip_crown">Triple Crown Model</a>
+    </div>
+  </div>
+  <div class="col-8">
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="list-average_war" role="tabpanel" aria-labelledby="list-average_war-list">...</div>
+      <div class="tab-pane fade" id="list-peak_war" role="tabpanel" aria-labelledby="list-peak_war-list">...</div>
+      <div class="tab-pane fade" id="list-trip_crown" role="tabpanel" aria-labelledby="list-trip_crown-list">...</div>
+    </div>
+  </div>
+</div> -->
+
+
+<h1 class="text-primary m-3">Top Predicted Salaries</h1>
+
+<h4 class="text-info mb-3 mt-5 ml-3 mr-3">Weighted WAR Model</h4>
+{{rankings_0.to_html(classes=["table-dark", "table-hover", "w-75", "m-3"]) | safe }}
+
+<h4 class="text-info mb-3 mt-5 ml-3 mr-3">Average WAR Model</h4>
+{{rankings_1.to_html(classes=["table-dark", "table-hover", "w-75", "m-3"]) | safe }}
+
+<h4 class="text-info mb-3 mt-5 ml-3 mr-3">Peak WAR Model</h4>
+{{rankings_2.to_html(classes=["table-dark", "table-hover", "thead text-left", "w-75", "m-3"]) | safe }}
+
+<h4 class="text-info mb-3 mt-5 ml-3 mr-3">Triple Crown Model</h4>
+{{rankings_3.to_html(classes=["table-dark", "table-hover", "thead text-left", "w-75", "m-3"]) | safe }}
 
 {% endblock %}

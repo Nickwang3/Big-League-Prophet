@@ -84,27 +84,46 @@ def average_stat(player_stats, statistic):
 	return average
 
 
+#gets the career high for a specific stat
+def career_high_stat(player_stats, statistic):
 
+	career_high = -10
+	for i in range(len(player_stats.index)):
+		if player_stats[statistic][i] > career_high:
+			career_high = player_stats[statistic][i]
+
+	if career_high == -10:
+		return 
+
+	return career_high
 
 # takes age of players and the length of the contracts that they sign and puts them into a new data set for testing
-def ageModel():
+def ageModel(iterations):
 
-	# ageGraph = pandas.DataFrame([0,0], columns=['Age', 'Contract Length'])
+	df = DataFrame(columns=('Age', 'Contract Length'))
 
-	for i in range(5):
-		
+	for i in range(iterations):
 
-		player = createPlayer()
-		
-		# row = pandas.DataFrame([player.contract.age_at_signing, player.contract.length], columns=['Age', 'Contract Length'])
+		name, team = getRandomPlayer()
+		player = createPlayer(name, team)
 
-		# ageGraph.append(row)
+		#checks if player is arbitration eligible yet (we dont want to include players who arent)
+		try:
+			if player.service_time < 4:
+				continue
+		except:
+			pass
 
-		print(player.age_at_signing, player.contract.length)
+		try:
+			age = player.age_at_signing
 
-	# return ageGraph
+			df.loc[i] = [age, player.contract.length]
 
-# ageModel()
+		except (AttributeError, IndexError):
+			pass
+
+	return df
+
 
 
 #takes war of last year before signing and relates it average annual contract value
@@ -135,6 +154,39 @@ def warModel(iterations):
 			pass
 
 	return df
+
+
+#creates a model based on the players peak WAR over there career
+def peakWarModel(iterations):
+
+	df = DataFrame(columns=("Peak_War", "Avg Annual"))
+	
+
+	for i in range(iterations):
+
+		name, team = getRandomPlayer()
+		player = createPlayer(name, team)
+
+		#checks if player is arbitration eligible yet (we dont want to include players who arent)
+		try:
+			if player.service_time < 4:
+				continue
+		except:
+			pass
+
+		try:
+			stats = player.stats_before_signing
+
+			war = career_high_stat(stats, "WAR")
+
+			df.loc[i] = [war, player.contract.avg_value]
+
+		except (AttributeError, IndexError):
+			pass
+
+	return df
+
+
 
 
 #determines innings, strike outs, ERA of year before signing and relates it to annual contract value
@@ -198,6 +250,18 @@ def updateWarModel():
 	testdfWar.to_csv("trainAndTestData/testingWAR.csv", index=False, header=True)
 
 
+def updatePeakWarModel():
+
+
+	traindfPeakWar = peakWarModel(600)
+
+	traindfPeakWar.to_csv("trainAndTestData/trainingPeakWAR.csv", index=False, header=True)
+
+	testdfPeakWar = warModel(50)
+
+	testdfPeakWar.to_csv("trainAndTestData/testingPeakWAR.csv", index=False, header=True)
+
+
 def updatePitcherModel():
 
 	traindfPitcher = pos_innings_Ks_ERA_model(600)
@@ -209,10 +273,23 @@ def updatePitcherModel():
 	testdfPitcher.to_csv('trainAndTestData/testingPitcher.csv')
 
 
+def updateAgeModel():
+
+	traindfAge = ageModel(600)
+
+	traindfAge.to_csv('trainAndTestData/trainingAge.csv')
+
+	testdfAge = ageModel(50)
+
+	testdfAge.to_csv('trainAndTestData/testingAge.csv')
+
+
 def updateModels():
 	
 	updateWarModel()
 	updatePitcherModel()
+	updatePeakWarModel()
+	updateAgeModel()
 
 
 

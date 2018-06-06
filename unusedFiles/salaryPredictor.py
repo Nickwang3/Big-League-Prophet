@@ -13,7 +13,7 @@ from updatePlayerStats import getPlayerID
 
 locale.setlocale(locale.LC_ALL, "en_US")
 
-def getrUserInputPlayer():
+def getUserInputPlayer():
 
 	playerName = input("Enter player's full name")
 	team = input("Enter team abbreviation").upper()
@@ -64,7 +64,7 @@ def predictSalaryWarModel():
 
 
 #get predictions based on war for all players
-def predictSalaryWarAllPlayers():
+def predictSalaryAverageWarAllPlayers():
 
 	df = DataFrame(columns=('Espn_id', 'War_salary_prediction'))
 
@@ -105,8 +105,44 @@ def predictSalaryWarAllPlayers():
 
 
 
+def predictSalaryPeakWarAllPlayers():
+
+	df = DataFrame(columns=('Espn_id', "Peak_war_salary_prediction"))
+
+	trainData = pd.read_csv("trainAndTestData/trainingPeakWAR.csv")
+	testData = pd.read_csv("trainAndTestData/testingPeakWAR.csv")
+
+	trainData = trainData.dropna()
+	testData = testData.dropna()
+
+	regr = linear_model.LinearRegression()
+
+	x_train = trainData['WAR'].values
+	y_train = trainData['Avg Annual'].values
+
+	x_train = x_train.reshape(x_train.size, 1)
+	y_train = y_train.reshape(y_train.size, 1)
+
+	regr.fit(x_train, y_train)
 
 
+	player_dict = getActivePlayerDict()
+
+	#create all player models 
+	count = 0
+	for key, value in player_dict.items():
+
+		try:
+			stats = keep_only_total_all_stats(key, value)
+			peak_war = career_high_stat(stats, "WAR")
+			prediction = int(regr.predict(peak_war))
+			df.loc[count] = [getPlayerID(key, value), prediction]
+		except:
+			df.loc[count] = [getPlayerID(key, value), -1]
+
+		count+=1 
+
+	df.to_csv('SalaryPredictions/PeakWarModel.csv')
 
 
 
@@ -195,5 +231,5 @@ def predictSalaryPitcherModel():
 
 
 
-
-predictSalaryWarAllPlayers()
+predictSalaryPeakWarAllPlayers()
+# predictSalaryAverageWarAllPlayers()
