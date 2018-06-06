@@ -12,7 +12,7 @@ run dataWeighting.py to update prediction models
 to run the program, run flaskbootstrapapp.py 
 
 currently the website allows user to enter a player and the team they are on and it will display their stats and a prediction for annual salary based on average war and 
-peak war for their career
+peak war for their career. User can also explore prediction leaderboards for each salary prediction model.
 
 
 SOURCES FOR DATA:
