@@ -8,6 +8,14 @@ import requests
 import pandas as pd 
 
 def main():
+	
+	url = 'http://crunchtimebaseball.com/baseball_map.html'
+
+	data = requests.get('http://crunchtimebaseball.com/master.csv').text
+
+	with open('playerIDS/IDS.csv', 'w', encoding='utf8') as file:
+   		file.write(data)
+
 
 	my_url = "https://www.usatoday.com/sports/mlb/salaries/"
 
