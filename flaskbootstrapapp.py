@@ -26,6 +26,10 @@ app = Flask(__name__)
 Bootstrap(app)
 app.secret_key = 'development key'
 
+@app.errorhandler(404)
+def page_not_found(e):
+    # note that we set the 404 status explicitly
+    return render_template('404.html'), 404
 
 @app.route('/')
 def index():
@@ -45,7 +49,7 @@ def models():
 	count = 0
 	for row in result:
 		rankings_0.loc[count] = [count + 1, row['name'], '{0:,d}'.format(row['weighted_war_salary_prediction'])]
-		count+=1	
+		count+=1
 
 	#average war
 	rankings_1 = pd.DataFrame(columns=("Rank","Name","Salary Predicted"))
@@ -65,16 +69,7 @@ def models():
 		rankings_2.loc[count] = [count + 1, row['name'], '{0:,d}'.format(row['peak_war_salary_prediction'])]
 		count+=1
 
-	#triple crown
-	rankings_3 = pd.DataFrame(columns=("Rank","Name","Salary Predicted"))
-	result = db.query('SELECT * FROM players ORDER BY triple_crown_salary_prediction DESC NULLS LAST LIMIT 20')
-
-	count = 0
-	for row in result:
-		rankings_3.loc[count] = [count + 1, row['name'], (row['triple_crown_salary_prediction'])]
-		count+=1
-
-	return render_template("prediction_models.html",rankings_0=rankings_0, rankings_1=rankings_1, rankings_2=rankings_2, rankings_3=rankings_3)
+	return render_template("prediction_models.html",rankings_0=rankings_0, rankings_1=rankings_1, rankings_2=rankings_2)
 
 
 @app.route('/players', methods=['GET', 'POST'])
@@ -87,7 +82,7 @@ def search():
 		name = form.player_name.data
 		name = "%" + name + "%"
 		result = db.query("SELECT * FROM players WHERE name LIKE '%s' ORDER BY average_value DESC NULLS LAST LIMIT 15" % name) 
-		
+
 		return render_template("players.html", form=form, result=result)
 
 
@@ -95,7 +90,7 @@ def search():
 
 
 @app.route("/players/id/<id>")
-def return_player1(id):
+def return_player(id):
 	
 	player = table.find_one(espn_id=id)
 

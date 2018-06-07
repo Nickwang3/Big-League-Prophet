@@ -30,6 +30,9 @@
 {% block styles %}
 {{super()}}
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+<style>
+  .dataframe thead th { text-align: left; }
+</style>  
 {% endblock %}
 
 {% block content %}
@@ -45,7 +48,7 @@
   {%endif%}
 
 
-  {{stats.to_html(classes="table table-dark") | safe }}
+  {{stats.to_html(index=False, classes="table table-dark").replace('<th>','<th style = "color: #00ffcc">') | safe }}
 
   {%if player['length']!=None %}
   <h1 class="font-weight-bold p-3 mb-2 text-dark"> Contract Data: </h4>
