@@ -190,7 +190,7 @@ def add_weighted_war_predictions():
 		table.upsert(dict(espn_id=espn_id, weighted_war_salary_prediction=prediction), ['espn_id'])
 
 
-# add_triple_crown_salary_predictions()
-# add_peak_war_predictions()
-# add_average_war_predictions()
+add_triple_crown_salary_predictions()
+add_peak_war_predictions()
+add_average_war_predictions()
 add_weighted_war_predictions()
