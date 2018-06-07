@@ -1,17 +1,16 @@
 # machineLearningBaseball
 
+In this order: 
 
-run salaryDataReader.py to update salary data file
+run PlayerDatabase.py to update the postgreSQL player database with salary data, player statistics, and player IDS
 
-mlbScraper.py is called upon by createPlayerObject.py to grab a players statistics from ESPN
+run dataModels.py to update the machine learning training models for predictions
 
-run PlayerDatabase.py to update the postgreSQL player database
-
-run dataWeighting.py to update prediction models
+run Predictions.py to update the player databases salary predictions for each player
 
 to run the program, run flaskbootstrapapp.py 
 
-currently the website allows user to enter a player and the team they are on and it will display their stats and a prediction for annual salary based on average war and 
+currently the website allows user to search for a player and it will display their stats and a prediction for annual salary based on weighted war, average war and 
 peak war for their career. User can also explore prediction leaderboards for each salary prediction model.
 
 
