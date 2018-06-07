@@ -8,10 +8,11 @@ from wtforms import Form, StringField
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms.validators import DataRequired
-from forms import SearchNameForm
+from forms import SearchNameForm, SearchNameTeamForm
 import locale
 import dataset
 from dataManipulation import convert_stats_to_dataframe
+import sys
 
 
 
@@ -76,47 +77,27 @@ def models():
 	return render_template("prediction_models.html",rankings_0=rankings_0, rankings_1=rankings_1, rankings_2=rankings_2, rankings_3=rankings_3)
 
 
-
-#searches for players
 @app.route('/players', methods=['GET', 'POST'])
-def players():
+def search():
+
 	form = SearchNameForm()
+	result = db.query("SELECT")
 
-	try:
-		if form.validate_on_submit():
-			name = form.player_name.data
-			team = form.team.data 
-			name = name.split()
-			first = name[0]
-			last = name[1]
-			return redirect('/players/' + team + "/" + first + "-" + last)
-	except AttributeError:
-		# flash("That player does not exist")
-		return redirect('/players')
-
-	return render_template("players.html", form=form)
+	if form.validate_on_submit():
+		name = form.player_name.data
+		name = "%" + name + "%"
+		result = db.query("SELECT * FROM players WHERE name LIKE '%s' ORDER BY average_value DESC NULLS LAST LIMIT 15" % name) 
+		
+		return render_template("players.html", form=form, result=result)
 
 
+	return render_template("players.html", form=form, result=result)
 
-#specific player page where all kinds of stats and predictions can be found
-@app.route("/players/<team>/<first>-<last>")
-def return_player(first, last, team):
-	name = first + " " + last
+
+@app.route("/players/id/<id>")
+def return_player1(id):
 	
-	players = table.find(name=name)
-
-
-	length = 0
-	for player in players:
-		length+=1
-
-	if length > 1:
-
-		player = table.find_one(name=name, team=team)
-
-	else:
-
-		player = table.find_one(name=name)
+	player = table.find_one(espn_id=id)
 
 	stats = convert_stats_to_dataframe(player['stats'])
 

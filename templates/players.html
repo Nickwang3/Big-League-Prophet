@@ -33,8 +33,27 @@
 
 {% block content %}
 
-<h1 class="w-50 p-3">Player Search </h1>
+<h1 class="w-50 m-3 text-primary">Player Search </h1>
 
-{{ wtf.quick_form(form) }}
+<container>
+  <div class="row justify-content-md-start">
+    <div class="col-2 ml-3">
+      {{ wtf.quick_form(form) }}
+    </div>
+  </div>
+
+  <h1 class="m-3 text-primary">Top Results</h1>
+  <div class="row justify-content-start">
+    <div class="col-2">
+      <div class="list-group">
+        {% if result %}
+        {% for row in result %}
+        <a href="{{ '/players/id/%s'%row['espn_id'] }}" % {{row['espn_id']}}) class="list-group-item list-group-item-action ml-3">{{row['name']}}, {{row['team']}}, {{row['position']}}</a>
+        {%endfor%}
+        {%endif%}
+      </div>
+    </div>
+  </div>
+</container>
 
 {% endblock %}

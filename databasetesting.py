@@ -9,7 +9,11 @@ db = dataset.connect('postgresql://baseball_project:baseball_project@localhost:5
 
 table = db['players']
 
-result = db.query('SELECT * FROM players ORDER BY average_war_salary_prediction DESC NULLS LAST LIMIT 20')
+user_input = input("enter name: ")
+user_input = "%" + user_input + "%"
+
+
+result = db.query("SELECT * FROM players WHERE name LIKE '%s' ORDER BY average_value DESC NULLS LAST LIMIT 15" % user_input)
 
 for row in result:
-	print(row['name'], row['average_war_salary_prediction'])
+	print(row['name'], row['espn_id'], row['team'])
