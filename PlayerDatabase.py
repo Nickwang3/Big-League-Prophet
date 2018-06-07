@@ -11,14 +11,15 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
 import pandas as pd 
-from playerAndContract import Player, Contract
 from getPlayerStats import getPlayerStats, getServiceTime
+from salaryDataReader import main as updateSalaryAndIDS
 
 #using dataset for easy use of postgres with python
 db = dataset.connect('postgresql://baseball_project:baseball_project@localhost:5432/player_database')
 
 table = db['players']
 
+updateSalaryAndIDS()
 
 salary_data = pd.read_csv('salary_data/salary_data.csv')
 
