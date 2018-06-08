@@ -152,6 +152,54 @@ def add_triple_crown_salary_predictions():
 		table.upsert(dict(espn_id=espn_id, triple_crown_salary_prediction=prediction), ['espn_id'])
 
 
+def add_output_per_atbat_predictions():
+
+	trainData = pd.read_csv("trainAndTestData/weighted_output_per_atbat.csv")
+
+	last_full_season = 2017 #last completed mlb season
+
+	regr = linear_model.Ridge(alpha=.5)
+
+	x_train = trainData[['Weighted ABs', 'Weighted Hits', 'Weighted 2Bs', 'Weighted 3Bs', 'Weighted HRs', 'Weighted BBs', 'Weighted SBs']].values
+	y_train = trainData['Avg Annual'].values
+
+	regr.fit(x_train, y_train)
+
+	#create all player predictions
+	for espn_id in espn_id_list:
+
+		player = table.find_one(espn_id=espn_id)
+
+		if player['position'] != 'P':
+			pass
+		else:
+			continue
+
+		try:
+			stats = player['stats'] 
+			stats = convert_stats_to_dataframe(stats)
+			stats = only_total_rows(player, stats)
+			weighted_ABs = weight_last_3(stats, 'AB', last_full_season)
+			weighted_Hits = weight_last_3(stats, 'H', last_full_season)
+			weighted_2Bs = weight_last_3(stats, '2B', last_full_season)
+			weighted_3Bs = weight_last_3(stats, '3B', last_full_season)
+			weighted_HRs = weight_last_3(stats, 'HR', last_full_season)
+			weighted_BBs = weight_last_3(stats, 'BB', last_full_season)
+			weighted_SBs = weight_last_3(stats, 'SB', last_full_season)
+
+			prediction = int(regr.predict([[weighted_ABs, weighted_Hits, weighted_2Bs, weighted_3Bs, weighted_HRs, weighted_BBs, weighted_SBs]]))
+
+			if prediction < 545000:
+				prediction = 545000
+			print(prediction)
+
+		except (pandas.io.common.EmptyDataError, ValueError, KeyError):
+			prediction=None
+
+		#insert predictions into player database
+		table.upsert(dict(espn_id=espn_id, output_per_atbat_salary_prediction=prediction), ['espn_id'])
+
+
 def add_weighted_war_predictions():
 
 	trainData = pd.read_csv("trainAndTestData/weighted_recent_WAR.csv")
@@ -190,7 +238,8 @@ def add_weighted_war_predictions():
 		table.upsert(dict(espn_id=espn_id, weighted_war_salary_prediction=prediction), ['espn_id'])
 
 
-add_triple_crown_salary_predictions()
-add_peak_war_predictions()
-add_average_war_predictions()
-add_weighted_war_predictions()
+# add_triple_crown_salary_predictions()
+# add_peak_war_predictions()
+# add_average_war_predictions()
+# add_weighted_war_predictions()
+add_output_per_atbat_predictions()

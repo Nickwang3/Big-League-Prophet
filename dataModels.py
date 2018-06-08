@@ -20,7 +20,51 @@ db = dataset.connect('postgresql://baseball_project:baseball_project@localhost:5
 table = db['players']
 
 
+def output_per_atbat_model():
 
+	model = DataFrame(columns=('Weighted ABs','Weighted Hits', 'Weighted 2Bs','Weighted 3Bs','Weighted HRs','Weighted BBs','Weighted SBs','Avg Annual'))
+	count = 0 
+	for row in salary_data.itertuples(index=True, name='Pandas'):
+
+		try:
+			team = str(getattr(row, "Team"))
+			name = str(getattr(row, "Name"))
+		except: 
+			print("exception found")
+
+
+		players = table.find(name=name)
+
+		
+		for player in players:
+
+			try:
+				actual_player = table.find_one(name=name, team=team)
+			except:
+				actual_player = table.find_one(name=name)
+
+			try:
+				stats = actual_player['stats_before_signing'] 
+				df = convert_stats_to_dataframe(stats)
+
+				adjusted_stats = only_total_rows(actual_player, df)
+
+				weighted_ABs = weight_last_3(adjusted_stats, 'AB', int(actual_player['sign_year']))
+				weighted_Hits = weight_last_3(adjusted_stats, 'H', int(actual_player['sign_year']))
+				weighted_2Bs = weight_last_3(adjusted_stats, '2B', int(actual_player['sign_year']))
+				weighted_3Bs = weight_last_3(adjusted_stats, '3B', int(actual_player['sign_year']))
+				weighted_HRs = weight_last_3(adjusted_stats, 'HR', int(actual_player['sign_year']))
+				weighted_BBs = weight_last_3(adjusted_stats, 'BB', int(actual_player['sign_year']))
+				weighted_SBs = weight_last_3(adjusted_stats, 'SB', int(actual_player['sign_year']))
+				model.loc[len(model)] = [weighted_ABs, weighted_Hits, weighted_2Bs, weighted_3Bs, weighted_HRs, weighted_BBs, weighted_SBs, actual_player['average_value']]
+
+
+			except (TypeError, pandas.io.common.EmptyDataError, KeyError):
+				pass
+
+	model = model.dropna()	
+
+	model.to_csv("trainAndTestData/weighted_output_per_atbat.csv", index=False, header=True)
 
 #war model salary predictions based on career average war before signing
 def average_war_model():
@@ -194,8 +238,8 @@ def triple_crown_model():
 	model.to_csv("trainAndTestData/training_triple_crown.csv", index=False, header=True)
 
 
-
-# triple_crown_model()
+output_per_atbat_model()
+triple_crown_model()
 recency_war_model()
-# peak_war_model()
-# average_war_model()
+peak_war_model()
+average_war_model()

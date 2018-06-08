@@ -83,6 +83,23 @@
       {%endif%}
     </div>
   </div>
+  {% if player['position'] != 'P' %}
+  <div class="row justify-content-start">
+    <div class="col-sm-4">
+      <h4 class='ml-3 mr-3'>Output Per Atbat Salary Prediction: ${{'{0:,d}'.format(per_atbat_salary | int)}} </h4>
+    </div>
+    <div class="col-sm-3">
+      {% if player['length'] != None %}
+      {% if (player['average_value'] | int ) > (player['output_per_atbat_salary_prediction'] | int)%}
+      <h4 class='ml-3 mr-3 text-danger'>Over Paid</h4>
+      {%endif%}
+      {% if (player['average_value'] | int ) <= (player['output_per_atbat_salary_prediction'] | int)%}
+      <h4 class='ml-3 mr-3 text-success'>Under Paid</h4>
+      {%endif%}
+      {%endif%}
+    </div>
+    {%endif%}
+  </div>
   <div class="row justify-content-start">
     <div class="col-sm-4">
       <h4 class='ml-3 mr-3'>Career Average WAR Salary Prediction: ${{'{0:,d}'.format(average_war_salary  | int)}} </h4>

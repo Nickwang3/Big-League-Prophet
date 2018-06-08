@@ -69,7 +69,16 @@ def models():
 		rankings_2.loc[count] = [count + 1, row['name'], '{0:,d}'.format(row['peak_war_salary_prediction'])]
 		count+=1
 
-	return render_template("prediction_models.html",rankings_0=rankings_0, rankings_1=rankings_1, rankings_2=rankings_2)
+	rankings_3 = pd.DataFrame(columns=("Rank","Name","Salary Predicted"))
+	result = db.query('SELECT * FROM players ORDER BY output_per_atbat_salary_prediction DESC NULLS LAST LIMIT 20')
+
+	count = 0
+	for row in result:
+		rankings_3.loc[count] = [count + 1, row['name'], '{0:,d}'.format(row['output_per_atbat_salary_prediction'])]
+		count+=1
+
+
+	return render_template("prediction_models.html",rankings_0=rankings_0, rankings_1=rankings_1, rankings_2=rankings_2, rankings_3=rankings_3)
 
 
 @app.route('/players', methods=['GET', 'POST'])
@@ -99,16 +108,12 @@ def return_player(id):
 	stats = stats.drop(columns=['Unnamed: 0'])
 
 	weighted_war_salary = player['weighted_war_salary_prediction']
+	per_atbat_salary = player['output_per_atbat_salary_prediction']
 	average_war_salary = player['average_war_salary_prediction']
 	peak_war_salary = player['peak_war_salary_prediction']
 
 
-	if player['position'] != 'P':
-		trip_salary = player['triple_crown_salary_prediction']
-	else:
-		trip_salary = None
-
-	return render_template("playerpage.html", player=player, stats=stats, title=player['name'], weighted_war_salary=weighted_war_salary, average_war_salary=average_war_salary, peak_war_salary=peak_war_salary, trip_salary=trip_salary)
+	return render_template("playerpage.html", player=player, stats=stats, title=player['name'], weighted_war_salary=weighted_war_salary, average_war_salary=average_war_salary, peak_war_salary=peak_war_salary, per_atbat_salary=per_atbat_salary)
 
 
 if __name__ == '__main__':
